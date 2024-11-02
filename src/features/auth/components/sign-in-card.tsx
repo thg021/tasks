@@ -1,7 +1,7 @@
-import { DottedSeparator } from "@/components/dotted-separator";
+import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema, type LoginSchemaProps } from "@/schema";
+import { LoginSchema, type LoginSchemaProps } from "@/features/auth/schemas";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useLogin } from "../api/use-login";
 
 export const SignInCard = () => {
+  const { mutate } = useLogin();
   const form = useForm<LoginSchemaProps>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -23,7 +25,14 @@ export const SignInCard = () => {
   });
 
   const onSubmit = (values: LoginSchemaProps) => {
-    console.log(values);
+    mutate(values, {
+      onSuccess: (data) => {
+        console.log(data);
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   };
 
   return (
@@ -32,7 +41,7 @@ export const SignInCard = () => {
         <CardTitle>Bem vindo de volta</CardTitle>
       </CardHeader>
       <div className="flex space-y-4 flex-col px-7 mb-6">
-        <DottedSeparator />
+        <Separator />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex flex-col space-y-2">

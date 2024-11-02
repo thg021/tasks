@@ -2,10 +2,9 @@ import { DottedSeparator } from "@/components/dotted-separator";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  LoginSchema,
   RegisterSchema,
   type RegisterSchemaProps,
-} from "@/schema";
+} from "@/features/auth/schemas";
 import { useForm } from "react-hook-form";
 import {
   Form,
