@@ -15,8 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRegister } from "../api/use-register";
 
 export const SignUpCard = () => {
+  const { mutate } = useRegister();
   const form = useForm<RegisterSchemaProps>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -27,7 +29,7 @@ export const SignUpCard = () => {
   });
 
   const onSubmit = (values: RegisterSchemaProps) => {
-    console.log(values);
+    mutate(values);
   };
 
   return (
