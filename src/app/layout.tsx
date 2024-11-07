@@ -20,7 +20,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(inter.className, "antialiased min-h-screen")}>
         <QueryProvider>
-          <Toaster />
+          <Toaster
+            toastOptions={{
+              classNames: {
+                error: "bg-red-400",
+                success: "border-none bg-emerald-100 text-emerald-600",
+                warning: "text-yellow-400",
+                info: "bg-blue-400",
+              },
+            }}
+          />
           {children}
         </QueryProvider>
       </body>

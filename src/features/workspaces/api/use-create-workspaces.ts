@@ -6,14 +6,14 @@ import { toast } from "sonner";
 type Workspace = typeof client.api.workspace;
 
 type ResponseType = InferResponseType<Workspace["$post"]>;
-type RequestType = InferRequestType<Workspace["$post"]>["json"];
+type RequestType = InferRequestType<Workspace["$post"]>["form"];
 
 export const useCreateWorkspace = () => {
 const queryClient = useQueryClient()
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
+    mutationFn: async (form) => {
       const response = await client.api.workspace["$post"]({
-        json,
+        form,
       });
 
       if (!response.ok) {
