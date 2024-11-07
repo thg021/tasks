@@ -12,3 +12,20 @@ export async function createAdminClient() {
     },
   };
 }
+
+export const getClientAPPWRITE = () =>  new Client()
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+
+  export const accountAPPWRITE = (session: string) => {
+    const client = new Client()
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+  
+    client.setSession(session);
+    return {
+      get account() {
+        return new Account(client);
+      }
+    }
+  } 

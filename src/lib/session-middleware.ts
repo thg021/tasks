@@ -1,10 +1,6 @@
 import "server-only";
-
-import "server-only";
-
 import {
   Account,
-  Client,
   Databases,
   Models,
   Storage,
@@ -18,6 +14,7 @@ import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 
 import { AUTH_COOKIE } from "@/features/auth/constants";
+import { getClientAPPWRITE } from "@/lib/appwrite";
 
 type AdditionalContext = {
   Variables: {
@@ -31,9 +28,7 @@ type AdditionalContext = {
 
 export const sessionMiddleware = createMiddleware<AdditionalContext>(
   async (c, next) => {
-    const client = new Client()
-      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+    const client = getClientAPPWRITE()
     const session = getCookie(c, AUTH_COOKIE);
 
     if (!session) {

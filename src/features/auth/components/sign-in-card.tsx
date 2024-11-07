@@ -1,3 +1,4 @@
+"use client";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useLogin } from "../api/use-login";
 
 export const SignInCard = () => {
-  const { mutate } = useLogin();
+  const { mutate, isPending } = useLogin();
   const form = useForm<LoginSchemaProps>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -56,6 +57,7 @@ export const SignInCard = () => {
                           {...field}
                           placeholder="email@mail.com"
                           type="email"
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -68,14 +70,21 @@ export const SignInCard = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input {...field} placeholder="****" type="password" />
+                        <Input
+                          {...field}
+                          placeholder="****"
+                          type="password"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <Button size="lg">Login</Button>
+              <Button size="lg" disabled={isPending}>
+                Login
+              </Button>
             </div>
           </form>
         </Form>
