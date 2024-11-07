@@ -38,7 +38,7 @@ export const UserButton = () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="start"
+        align="end"
         side="bottom"
         className="w-60"
         sideOffset={10}
