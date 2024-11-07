@@ -3,12 +3,14 @@ import { handle } from "hono/vercel";
 import { HTTPException } from "hono/http-exception";
 
 import auth from "@/features/auth/server/route";
+import workspaces from "@/features/workspaces/server/route";
 
 //export const runtime = "edge";
 
 const app = new Hono().basePath("/api");
 
-const routes = app.route("/auth", auth);
+const routes = app.route("/auth", auth).route("/workspace", workspaces);
+
 
 app.onError((err, c) => {
   console.log(err);

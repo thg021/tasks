@@ -2,6 +2,7 @@ import { client } from "@/lib/rpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type AuthLogin = typeof client.api.auth.login;
 
@@ -16,11 +17,21 @@ export const useLogin = () => {
       const response = await client.api.auth.login["$post"]({
         json,
       });
+
+      if (!response.ok) {
+        throw new Error("Erro ao fazer login!");
+      }
+
       return await response.json();
     },
     onSuccess: () => {
+      toast.success("Login realizado com sucesso!");
       router.refresh()
       queryClient.invalidateQueries({ queryKey: ["current"] });
+    }, 
+    onError: (error) => {
+      console.error(error);
+      toast.error("Erro ao fazer login!");
     }
   });
 
