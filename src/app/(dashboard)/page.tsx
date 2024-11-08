@@ -1,6 +1,6 @@
 import { getCurrent } from "@/features/auth/action";
-import { UserButton } from "@/features/auth/components/user-button";
 import { CreateWorkspaceForm } from "@/features/workspaces/components/create-workspace-form";
+import { WorkspaceSwitcher } from "@/features/workspaces/components/workspace-switcher";
 import { redirect } from "next/navigation";
 
 export default async function Home() {

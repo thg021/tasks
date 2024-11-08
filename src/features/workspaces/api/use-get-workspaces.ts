@@ -1,28 +1,20 @@
 import { client } from "@/lib/rpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { InferRequestType, InferResponseType } from "hono";
-import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
-type AuthLogin = typeof client.api.auth.login;
+export const useGetWorkspaces = () => {
+  const query = useQuery({
+    queryKey: ["workspaces"],
+    queryFn: async () => {
+      const response = await client.api.workspace["$get"]();
 
-type ResponseType = InferResponseType<AuthLogin["$post"]>;
-type RequestType = InferRequestType<AuthLogin["$post"]>["json"];
+      if (!response.ok) {
+        return null;
+      }
 
-export const useLogin = () => {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
-      const response = await client.api.auth.login["$post"]({
-        json,
-      });
-      return await response.json();
+      const data = await response.json();
+      return data;
     },
-    onSuccess: () => {
-      router.refresh()
-      queryClient.invalidateQueries({ queryKey: ["current"] });
-    }
   });
 
-  return mutation;
+  return query;
 };
