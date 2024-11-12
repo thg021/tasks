@@ -11,7 +11,6 @@ const app = new Hono().basePath("/api");
 
 const routes = app.route("/auth", auth).route("/workspace", workspaces);
 
-
 app.onError((err, c) => {
   console.log(err);
   if (err instanceof HTTPException) {

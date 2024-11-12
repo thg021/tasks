@@ -54,12 +54,9 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
       image: values.image instanceof File ? values.image : "",
     };
     createWorkspace(finalValues, {
-      onSuccess: ({ data: { database } }) => {
+      onSuccess: ({ data }) => {
         form.reset();
-        console.log("acabei de criar", database);
-        router.push(`/workspaces/${database.$id}`);
-
-        //TODO: redirect to workspace
+        router.push(`/workspaces/${data.id}`);
       },
       onError: (error) => {
         console.error(error);

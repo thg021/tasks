@@ -9,9 +9,11 @@ export default async function Home() {
   if (!user) redirect("/sign-in");
 
   const workspaces = await getWorkspaces();
-  if (!workspaces || workspaces?.total === 0 || size(workspaces.data) === 0) {
-    redirect("/workspaces/create?create-workspace=true");
+
+  if (workspaces.total === 0) {
+    redirect("/workspaces/create");
   }
+
   const workspace = first(workspaces.data);
-  redirect(`/workspaces/${workspace?.$id}`);
+  redirect(`/workspaces/${workspace?.id}`);
 }

@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { map } from "lodash";
+import { map, size } from "lodash";
 import { WorkspaceAvatar } from "@/features/workspaces/components/workspace-avatar";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
@@ -67,10 +67,10 @@ export const WorkspaceSwitcher = () => {
         )}
         <SelectContent>
           {map(workspaces?.data, (workspace) => (
-            <SelectItem key={workspace.$id} value={workspace.$id}>
+            <SelectItem key={workspace.id} value={workspace.id}>
               <div className="flex justify-start items-center gap-1 font-medium">
                 <WorkspaceAvatar
-                  image={workspace.imageUrl}
+                  image={workspace.imageUrl || ""}
                   name={workspace.name}
                   className="border border-solid-red"
                 />
@@ -78,7 +78,7 @@ export const WorkspaceSwitcher = () => {
               </div>
             </SelectItem>
           ))}
-          {workspaces?.data?.length === 0 && (
+          {size(workspaces?.data) === 0 && (
             <SelectItem value="empty">
               <div className="flex justify-start items-center gap-1 font-medium">
                 <span className="truncate">Nenhum workspace encontrado</span>
