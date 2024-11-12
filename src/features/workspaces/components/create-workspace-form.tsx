@@ -23,13 +23,15 @@ import { useCreateWorkspace } from "../api/use-create-workspaces";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ImageIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type CreateWorkspaceFormProps = {
   onCancel?: () => void;
 };
 export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
   const { mutate: createWorkspace, isPending } = useCreateWorkspace();
-
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<CreateWorkspaceSchemaProps>({
@@ -52,8 +54,11 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
       image: values.image instanceof File ? values.image : "",
     };
     createWorkspace(finalValues, {
-      onSuccess: () => {
+      onSuccess: ({ data: { database } }) => {
         form.reset();
+        console.log("acabei de criar", database);
+        router.push(`/workspaces/${database.$id}`);
+
         //TODO: redirect to workspace
       },
       onError: (error) => {
@@ -153,7 +158,12 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
             </div>
             <Separator />
             <div className="flex items-center justify-between">
-              <Button onClick={onCancel} size="lg" variant="secondary">
+              <Button
+                onClick={onCancel}
+                size="lg"
+                variant="secondary"
+                className={cn(!onCancel && "invisible")}
+              >
                 Cancelar
               </Button>
               <Button size="lg" type="submit" disabled={isPending}>

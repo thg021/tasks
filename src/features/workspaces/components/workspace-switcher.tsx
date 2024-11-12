@@ -1,6 +1,6 @@
 "use client";
 import { Loader } from "lucide-react";
-import { useGetWorkspaces } from "../api/use-get-workspaces";
+import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import { RiAddCircleFill } from "react-icons/ri";
 import {
   Select,
@@ -10,9 +10,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { map } from "lodash";
-import { WorkspaceAvatar } from "./workspace-avatar";
+import { WorkspaceAvatar } from "@/features/workspaces/components/workspace-avatar";
+import { useRouter } from "next/navigation";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useCreateWorkspaceModal } from "../hooks/use-create-workspaces-modal";
+
 export const WorkspaceSwitcher = () => {
-  const { data: workspaces, isLoading } = useGetWorkspaces();
+  const {
+    data: workspaces,
+    isLoading,
+    isError,
+    isFetching,
+  } = useGetWorkspaces();
+  const workspaceId = useWorkspaceId();
+  const router = useRouter();
+  const { open } = useCreateWorkspaceModal();
+  const onSelect = (value: string) => {
+    router.push(`/workspaces/${value}`);
+  };
 
   if (isLoading) {
     return (
@@ -28,12 +43,28 @@ export const WorkspaceSwitcher = () => {
     <div className="flex flex-col gap-y-4 w-full">
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase text-neutral-500">Workspaces </p>
-        <RiAddCircleFill className="size-5 text-neutral-500 cursor-pointer hover:opacity-70 transition" />
+        <RiAddCircleFill
+          onClick={open}
+          className="size-5 text-neutral-500 cursor-pointer hover:opacity-70 transition"
+        />
       </div>
-      <Select>
+      <Select
+        onValueChange={onSelect}
+        value={isFetching ? "loading" : workspaceId}
+      >
         <SelectTrigger className="w-full bg-neutral-200 font-medium p-1">
           <SelectValue placeholder="Selecione um workspace" />
         </SelectTrigger>
+        {isFetching && (
+          <SelectContent>
+            <SelectItem value="loading">
+              <div className="flex justify-start items-center gap-1 font-medium">
+                <div className="size-4 animate-pulse rounded-full bg-neutral-300" />
+                <span className="truncate">Carregando...</span>
+              </div>
+            </SelectItem>
+          </SelectContent>
+        )}
         <SelectContent>
           {map(workspaces?.data, (workspace) => (
             <SelectItem key={workspace.$id} value={workspace.$id}>

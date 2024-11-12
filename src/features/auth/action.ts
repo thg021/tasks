@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { AUTH_COOKIE } from "./constants";
-import { accountAPPWRITE } from "@/lib/appwrite";
+import { servicesAPPWRITE } from "@/lib/appwrite";
 
 export const getCurrent = async () => {
   try {
@@ -11,7 +11,7 @@ export const getCurrent = async () => {
       return null
     }
     
-    const { account } = accountAPPWRITE(session.value)
+    const { account } = servicesAPPWRITE(session.value)
     return await account.get()
   } catch (error) {
     console.error(error)
