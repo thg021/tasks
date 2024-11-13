@@ -13,6 +13,7 @@ const app = new Hono()
 .get("/", sessionMiddleware, async (c) => {
     const user = c.get("user");
 
+   
   const workspaces = await getWorkspacesById(user.$id);
   
   if(size(workspaces) === 0) {

@@ -30,7 +30,6 @@ export const getWorkspaces = async () => {
     // ])
     const workspaces = await getWorkspacesById(user.$id);
 
-
     if(size(workspaces) === 0) {
       return {
         data: [],
