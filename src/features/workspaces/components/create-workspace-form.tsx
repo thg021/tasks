@@ -51,7 +51,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
   const onSubmit = (values: CreateWorkspaceSchemaProps) => {
     const finalValues = {
       ...values,
-      image: values.image instanceof File ? values.image : "",
+      image: values.image instanceof File ? values.image : undefined,
     };
     createWorkspace(finalValues, {
       onSuccess: ({ data }) => {
@@ -104,6 +104,19 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
                       <div className="flex items-center gap-x-5">
                         {field.value ? (
                           <div className="size-[72px] relative rounded-md overflow-hidden">
+                            <div
+                              onClick={() => {
+                                field.onChange(null);
+                                if (inputRef.current) {
+                                  inputRef.current.value = "";
+                                }
+                              }}
+                              className="bg-none group flex transition-colors hover:bg-slate-900/85 size-[72px] absolute cursor-pointer  top-0 z-10 items-center justify-center"
+                            >
+                              <span className="text-xs text-white font-bold hidden group-hover:block transition-all">
+                                Remover
+                              </span>
+                            </div>
                             <Image
                               src={
                                 field.value instanceof File

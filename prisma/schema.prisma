@@ -22,6 +22,7 @@ model Workspace {
   id        String   @id @default(cuid())
   name      String
   imageUrl  String?
+  storageId String?
   created   DateTime @default(now())
   updated   DateTime @updatedAt
   

@@ -3,9 +3,7 @@
 import { cookies } from "next/headers";
 import { AUTH_COOKIE } from "@/features/auth/constants";
 import { servicesAPPWRITE } from "@/lib/appwrite";
-import { DATABASE_ID, MEMBERS_ID, WORKSPACE_ID } from "@/config";
-import { Query } from "node-appwrite";
-import { map, size } from "lodash";
+import { size } from "lodash";
 import { getWorkspacesById } from "./services";
 
 /**
@@ -23,11 +21,9 @@ export const getWorkspaces = async () => {
       }
     }
     
-    const { database, account } = servicesAPPWRITE(session.value)
+    const { account } = servicesAPPWRITE(session.value)
     const user = await account.get()
-    // const members = await database.listDocuments(DATABASE_ID, MEMBERS_ID, [
-    //   Query.equal("userId", user.$id)
-    // ])
+
     const workspaces = await getWorkspacesById(user.$id);
 
     if(size(workspaces) === 0) {

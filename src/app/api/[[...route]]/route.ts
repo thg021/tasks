@@ -12,7 +12,7 @@ const app = new Hono().basePath("/api");
 const routes = app.route("/auth", auth).route("/workspace", workspaces);
 
 app.onError((err, c) => {
-  console.log(err);
+  console.error(err);
   if (err instanceof HTTPException) {
     // Get the custom response
     return err.getResponse();
@@ -23,5 +23,6 @@ app.onError((err, c) => {
 
 export const GET = handle(app);
 export const POST = handle(app);
+export const PATCH = handle(app);
 
 export type AppType = typeof routes;
