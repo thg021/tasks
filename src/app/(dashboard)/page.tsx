@@ -1,11 +1,11 @@
-import { getCurrent } from "@/features/auth/action";
+import { getUserCurrentSession } from "@/features/auth/action";
 import { getWorkspaces } from "@/features/workspaces/action";
 import { CreateWorkspaceForm } from "@/features/workspaces/components/create-workspace-form";
 import { first, head, size } from "lodash";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const user = await getCurrent();
+  const user = await getUserCurrentSession();
   if (!user) redirect("/sign-in");
 
   const workspaces = await getWorkspaces();
