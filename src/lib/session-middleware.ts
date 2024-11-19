@@ -1,53 +1,35 @@
 import "server-only";
-import {
-  Account,
-  Databases,
-  Models,
-  Storage,
-  type Account as AccountType,
-  type Databases as DatabasesType,
-  type Storage as StorageType,
-  type Users as UsersType,
-} from "node-appwrite";
 
-import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
+import { getToken } from 'next-auth/jwt'
 
-import { AUTH_COOKIE } from "@/features/auth/constants";
-import { getClientAPPWRITE } from "@/lib/appwrite";
-
+type User = {
+  id: string
+  name?: string
+  email?: string
+  avatarUrl?: string
+}
 type AdditionalContext = {
   Variables: {
-    account: AccountType;
-    databases: DatabasesType;
-    storage: StorageType;
-    users: UsersType;
-    user: Models.User<Models.Preferences>;
+    user: User
   };
 };
 
 export const sessionMiddleware = createMiddleware<AdditionalContext>(
   async (c, next) => {
-    const client = getClientAPPWRITE()
-    const session = getCookie(c, AUTH_COOKIE);
-
-    if (!session) {
-      return c.json({ error: "Unauthorized" }, 401);
+    const token = await getToken({ req: c.req.raw, secret: process.env.AUTH_SECRET })
+  
+    if (!token) {
+      return c.json({ error: "Acesso não autorizado" }, 401);
     }
 
-    client.setSession(session);
-
-    const account = new Account(client);
-    const databases = new Databases(client);
-    const storage = new Storage(client);
-
-    const user = await account.get();
-
-    c.set("account", account);
-    c.set("databases", databases);
-    c.set("storage", storage);
+    const user = {
+      id: token.sub!,
+      name: token.name!,
+      email: token.email!,
+      avatarUrl: token.picture ?? undefined,
+    }
     c.set("user", user);
-
     await next();
   }
 );

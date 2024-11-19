@@ -4,7 +4,7 @@ import type { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-type RegisterAuth = typeof client.api.auth.register;
+type RegisterAuth = typeof client.api.authenticated.register;
 
 type ResponseType = InferResponseType<RegisterAuth["$post"]>;
 type RequestType = InferRequestType<RegisterAuth["$post"]>["json"];
@@ -14,7 +14,7 @@ export const useRegister = () => {
   const queryClient = useQueryClient()
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.auth.register["$post"]({
+      const response = await client.api.authenticated.register["$post"]({
         json,
       });
 

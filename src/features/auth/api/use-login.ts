@@ -4,7 +4,7 @@ import type { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-type AuthLogin = typeof client.api.auth.login;
+type AuthLogin = typeof client.api.authenticated.login
 
 type ResponseType = InferResponseType<AuthLogin["$post"]>;
 type RequestType = InferRequestType<AuthLogin["$post"]>["json"];
@@ -14,7 +14,7 @@ export const useLogin = () => {
   const queryClient = useQueryClient()
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.auth.login["$post"]({
+      const response = await client.api.authenticated.login["$post"]({
         json,
       });
 

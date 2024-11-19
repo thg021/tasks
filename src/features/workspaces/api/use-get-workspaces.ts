@@ -8,10 +8,14 @@ export const useGetWorkspaces = () => {
       const response = await client.api.workspace["$get"]();
 
       if (!response.ok) {
-        return null;
+        return {
+          data: [], 
+          total: 0
+        }
       }
 
       const data = await response.json();
+      
       return data;
     },
   });

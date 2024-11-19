@@ -1,3 +1,4 @@
+//TODO: delete this file
 import "server-only";
 import { Client, Account, Databases } from "node-appwrite";
 export async function createAdminClient() {

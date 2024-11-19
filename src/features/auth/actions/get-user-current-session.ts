@@ -1,9 +1,7 @@
 'use server'
 import { redirect as redirectNext } from "next/navigation";
-import { cookies } from "next/headers";
 
-import { AUTH_COOKIE } from "@/features/auth/constants";
-import { servicesAPPWRITE } from "@/lib/appwrite";
+import { auth } from "@/lib/auth";
 
 type GetUserCurrentSession = {
     redirect?: boolean 
@@ -11,13 +9,13 @@ type GetUserCurrentSession = {
 export const getUserCurrentSession = async (opts?: GetUserCurrentSession ) => {
   const redirect = opts?.redirect ?? true
   try {
-    const session = await cookies().get(AUTH_COOKIE)
-    if (!session) {
+
+    const session = await auth()
+
+    if (!session?.user) {
       return redirect ? redirectNext("/sign-in") : null
     }
-    
-    const { account } = servicesAPPWRITE(session.value)
-    return await account.get()
+        return session?.user;
   } catch (error) {
     console.error(error)
     return null

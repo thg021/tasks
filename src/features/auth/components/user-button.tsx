@@ -1,6 +1,6 @@
 "use client";
 import { Avatar } from "@/components/ui/avatar";
-import { useCurrent } from "../api/use-current";
+import { useCurrent } from "@/features/auth/api/use-current";
 import { Loader, LogOutIcon } from "lucide-react";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import {
@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { useLogout } from "../api/use-logout";
+import { signOut } from "next-auth/react";
 export const UserButton = () => {
   const { data: user, isLoading } = useCurrent();
-  const { mutate: logout } = useLogout();
+  const onSignOut = () => signOut({ redirectTo: "/sign-in" });
+
   if (isLoading) {
     return (
       <div className="size-10 rounded-full flex items-center justify-center bg-neutral-200 border border-neutral-300">
@@ -24,7 +25,7 @@ export const UserButton = () => {
 
   if (!user) return null;
 
-  const { name, email } = user.data;
+  const { name, email } = user;
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
     : email?.charAt(0).toUpperCase() ?? "T";
@@ -56,7 +57,7 @@ export const UserButton = () => {
         </div>
         <Separator className="mt-1" />
         <DropdownMenuItem
-          onClick={() => logout()}
+          onClick={onSignOut}
           className="h-10 flex cursor-pointer items-center text-rose-600"
         >
           <LogOutIcon className="size-4 mr-2" />

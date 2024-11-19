@@ -1,6 +1,6 @@
 import { client } from "@/lib/rpc";
 import { useQuery } from "@tanstack/react-query";
-import type { InferResponseType, InferRequestType } from "hono/client";
+import type { InferResponseType } from "hono/client";
 type WorkspaceResponse = InferResponseType<typeof client.api.workspace[":workspaceId"]["$get"], 200>;
 
 export const useGetWorkspaceById = (workspaceId: string) => {

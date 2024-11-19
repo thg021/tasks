@@ -1,8 +1,8 @@
-import { getUserCurrentSession } from "@/features/auth/action";
-import { EditWorkspaceCard } from "@/features/workspaces/components/edit-workspace-card";
+import { redirect } from "next/navigation";
+
+import { getUserCurrentSession } from "@/features/auth/actions/get-user-current-session";
 import { EditWorkspaceForm } from "@/features/workspaces/components/edit-workspace-form";
 import { getWorkspaceById } from "@/features/workspaces/services";
-import { redirect } from "next/navigation";
 
 type WorkspaceIdSettingPageProps = {
   params: {
@@ -13,9 +13,8 @@ export default async function WorkspaceIdSettingPage({
   params,
 }: WorkspaceIdSettingPageProps) {
   const user = await getUserCurrentSession();
-  if (!user) redirect("/sign-in");
   const workspace = await getWorkspaceById({
-    userId: user?.$id,
+    userId: user?.id,
     workspaceId: params.workspacesId,
   });
 
@@ -24,9 +23,6 @@ export default async function WorkspaceIdSettingPage({
   return (
     <div className="flex flex-col">
       <EditWorkspaceForm initialValues={workspace} />
-      <pre>{JSON.stringify(workspace, null, 2)}</pre>
-
-      {/* <EditWorkspaceCard workspaceId={params.workspacesId} /> */}
     </div>
   );
 }

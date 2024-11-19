@@ -30,6 +30,7 @@ const queryClient = useQueryClient()
       toast.success("Workspace criado com sucesso!");
     }, 
     onError: (error) => {
+      console.error(error)
       toast.error("Erro ao atualizar o workspace!");
     }
   });

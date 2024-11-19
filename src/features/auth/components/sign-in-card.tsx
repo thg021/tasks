@@ -1,4 +1,5 @@
 "use client";
+import { useTransition } from "react";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,10 +14,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useLogin } from "../api/use-login";
+import { loginAction } from "@/features/auth/actions/login";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export const SignInCard = () => {
-  const { mutate, isPending } = useLogin();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const session = useSession();
+  if (session.data && session.status === "authenticated") {
+    router.push("/");
+  }
   const form = useForm<LoginSchemaProps>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -26,13 +34,14 @@ export const SignInCard = () => {
   });
 
   const onSubmit = (values: LoginSchemaProps) => {
-    mutate(values, {
-      onSuccess: (data) => {
-        console.log(data);
-      },
-      onError: (error) => {
-        console.error(error);
-      },
+    startTransition(() => {
+      loginAction(values)
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     });
   };
 

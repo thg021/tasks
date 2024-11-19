@@ -1,19 +1,16 @@
-import { getUserCurrentSession } from "@/features/auth/action";
-import { getWorkspaces } from "@/features/workspaces/action";
-import { CreateWorkspaceForm } from "@/features/workspaces/components/create-workspace-form";
-import { first, head, size } from "lodash";
+"use client";
+
+import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
+import { first } from "lodash";
 import { redirect } from "next/navigation";
 
-export default async function Home() {
-  const user = await getUserCurrentSession();
-  if (!user) redirect("/sign-in");
-
-  const workspaces = await getWorkspaces();
-
-  if (workspaces.total === 0) {
+export default function Home() {
+  const { data: workspaces, isLoading } = useGetWorkspaces();
+  if (isLoading) return;
+  if (workspaces && workspaces?.total === 0) {
     redirect("/workspaces/create");
   }
 
-  const workspace = first(workspaces.data);
+  const workspace = first(workspaces?.data);
   redirect(`/workspaces/${workspace?.id}`);
 }
