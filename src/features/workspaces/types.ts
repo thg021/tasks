@@ -9,3 +9,7 @@ export type CreateWorkspaceProps = {
   userId: string;
   role: Role 
 }
+
+export type DeleteWorkspaceProps = {
+  workspaceId: string;
+}

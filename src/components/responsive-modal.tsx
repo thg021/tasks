@@ -21,6 +21,7 @@ export const ResponsiveModal = ({
         <DialogTitle>{""}</DialogTitle>
         <DialogContent
           aria-describedby="Criar novo workspace"
+          aria-description="Description of the dialog"
           className="w-full sm:max-w-lg p-o border-none overflow-y-auto hide-scrollbar max-h-[85vh]"
         >
           {children}
@@ -30,7 +31,10 @@ export const ResponsiveModal = ({
   }
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent>
+      <DrawerContent
+        aria-describedby="Criar novo workspace"
+        aria-description="Description of the dialog"
+      >
         <div className="overflow-y-auto hide-scrollbar max-h-[85vh]">
           {children}
         </div>

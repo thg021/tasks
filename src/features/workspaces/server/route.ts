@@ -5,9 +5,10 @@ import { sessionMiddleware } from "@/lib/session-middleware";
 import { MemberRole } from "@/features/members/types";
 import { size } from "lodash";
 import { db } from "@/lib/db.prisma";
-import { createWorkspace, getWorkspaceById, getWorkspacesById } from "@/features/workspaces/services";
+import { createWorkspace, deleteWorkspace, getWorkspaceById, getWorkspacesById } from "@/features/workspaces/services";
 import type { Prisma } from "@prisma/client";
 import type { CreateWorkspaceProps } from "@/features/workspaces/types";
+import { getMemberById } from "@/features/members/services/get-member-by-id";
 
 const app = new Hono()
 .get("/", sessionMiddleware, async (c) => {
@@ -117,6 +118,35 @@ const app = new Hono()
 
   return c.json({
     data: updatedWorkspace,
+  });
+
+})
+.delete("/:workspaceId", sessionMiddleware, async (c) => {
+  const user = c.get("user");
+  const { workspaceId } = c.req.param()
+
+  if (!workspaceId) {
+    return c.json({ 
+      error: "Não autorizado: WorkspaceId inválido" 
+    }, 401);
+  }
+
+  const member = await getMemberById({ userId: user.id, workspaceId });
+
+  if (!member) {
+    return c.json({ 
+      error: "Não autorizado: Somente administrator pode deletar o cadastro" 
+    }, 401);
+  }
+
+  deleteWorkspace({ workspaceId });
+
+  await db.workspace.delete({
+    where: { id: workspaceId }
+   });
+
+  return c.json({
+    data: workspaceId,
   });
 
 })
