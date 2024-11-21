@@ -9,8 +9,12 @@ export const createWorkspace = async ({ name, imageUrl, storageId, userId, role 
     storageId,
     members: {
       create: {
-        userId,
-        role
+       user: {
+        connect: {
+          id: userId,
+          role, 
+        }
+       }
       },
     }
   },

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -25,11 +19,12 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
+  role          Role            @default(USER)
   accounts      Account[]
   sessions      Session[]
-  members       Member[]  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  members       Member[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
  
 model Account {
@@ -44,31 +39,13 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
-}
-
-model VerificationToken {
-  id String @id @default(cuid())
-  email String 
-  token String @unique
-  expires DateTime
-
-  @@unique([email, token])
-}
-
-model PasswordResetToken {
-  id String @id @default(cuid())
-  email String 
-  token String @unique
-  expires DateTime
-
-  @@unique([email, token])
 }
 
 model Session {
@@ -76,7 +53,7 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -88,25 +65,26 @@ model Workspace {
   storageId String?
   created   DateTime @default(now())
   updated   DateTime @updatedAt
-  
-  // Relacionamentos
+
   members   Member[]
 }
 
-// Modelo para Member
 model Member {
   id          String    @id @default(cuid())
-  role        Role      @default(USER)
   created     DateTime  @default(now())
   updated     DateTime  @updatedAt
-  
-  // Relacionamentos
-  userId      String    // Campo para o ID do usuário
-  workspaceId String    // Campo para o ID do workspace
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  // Índices
-  @@index([workspaceId])
-  @@unique([userId, workspaceId]) // Garante que um usuário só pode ser membro uma vez em cada workspace
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaces  Workspace[]
 }
+
+// model MemberWorkspace {
+//   memberId    String
+//   member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+//   workspaceId String
+//   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+//   @@id([memberId, workspaceId]) // Define a chave composta
+//   @@index([memberId])           // Índice adicional para memberId
+//   @@index([workspaceId])        // Índice adicional para workspaceId
+// }

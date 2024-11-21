@@ -2,12 +2,14 @@ import "server-only";
 
 import { createMiddleware } from "hono/factory";
 import { getToken } from 'next-auth/jwt'
+import type { Role } from "@prisma/client";
 
 type User = {
   id: string
   name?: string
   email?: string
   avatarUrl?: string
+  role: Role
 }
 type AdditionalContext = {
   Variables: {
@@ -27,6 +29,7 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
       id: token.sub!,
       name: token.name!,
       email: token.email!,
+      role: token.role,
       avatarUrl: token.picture ?? undefined,
     }
     c.set("user", user);

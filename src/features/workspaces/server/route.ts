@@ -68,8 +68,11 @@ const app = new Hono()
   const member = await db.member.findFirst({
     where: {
       userId: user.id,
-      workspaceId,
-      role: "ADMIN"
+      workspaces: {
+        some: {
+          id: workspaceId,
+        },
+      },
     }
   });
 
@@ -131,11 +134,17 @@ const app = new Hono()
     }, 401);
   }
 
-  const member = await getMemberById({ userId: user.id, workspaceId });
-
-  if (!member) {
+  if (user.role !== "ADMIN") {
     return c.json({ 
       error: "Não autorizado: Somente administrator pode deletar o cadastro" 
+    }, 401);
+  }
+
+  const workspace = await getWorkspaceById({userId: user.id, workspaceId});
+
+  if (!workspace) {
+    return c.json({
+       error: "Não autorizado: Você não tem permissão para deletar o cadastro."
     }, 401);
   }
 

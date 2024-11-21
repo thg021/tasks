@@ -8,10 +8,10 @@ type GetWorkspaceByIdRequest = {
 
 export const getWorkspaceById = async ({ userId, workspaceId}: GetWorkspaceByIdRequest) => await db.workspace.findFirst({
     where: {
+      id: workspaceId,
       members: {
         some: {
-          userId: userId,
-          workspaceId
+          userId
         }
       }
     },
