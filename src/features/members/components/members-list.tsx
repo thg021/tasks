@@ -34,47 +34,55 @@ export const MembersList = () => {
                 className="size-8"
                 fallbackClassName="text-lg"
               />
+
               <div className="flex flex-col">
                 <p className="text-sm font-medium">{member.name}</p>
                 <p className="text-xs text-muted-foreground">{member.email}</p>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="ml-auto">
-                    <MoreHorizontal className="size-4 text-muted-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="bottom" align="end">
-                  <DropdownMenuItem
-                    className="font-medium"
-                    onClick={() => {}}
-                    disabled={false}
-                  >
-                    Adm
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="font-medium"
-                    onClick={() => {}}
-                    disabled={false}
-                  >
-                    Membro
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="font-medium"
-                    onClick={() => {}}
-                    disabled={false}
-                  >
-                    Editar
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="font-medium text-red-500"
-                    onClick={() => {}}
-                    disabled={false}
-                  >
-                    Remover
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex gap-2 items-center ml-auto">
+                {member.role === "ADMIN" && (
+                  <span className="ml-auto text-xs bg-emerald-300 py-1 px-2 text-emerald-900 rounded-md">
+                    Adiministrador
+                  </span>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="ml-auto">
+                      <MoreHorizontal className="size-4 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent side="bottom" align="end">
+                    <DropdownMenuItem
+                      className="font-medium"
+                      onClick={() => {}}
+                      disabled={false}
+                    >
+                      Adm
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="font-medium"
+                      onClick={() => {}}
+                      disabled={false}
+                    >
+                      Membro
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="font-medium"
+                      onClick={() => {}}
+                      disabled={false}
+                    >
+                      Editar
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="font-medium text-red-500"
+                      onClick={() => {}}
+                      disabled={false}
+                    >
+                      Remover
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
             {index < members.data.length - 1 && <Separator />}
           </>
