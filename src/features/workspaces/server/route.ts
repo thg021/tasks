@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { size } from 'lodash';
-import { getMemberById } from '@/features/members/services/get-member-by-id';
 import { MemberRole } from '@/features/members/types';
 import { createWorkspaceSchema, updateWorkspaceSchema } from '@/features/workspaces/schemas';
 import { createWorkspace, deleteWorkspace, getWorkspaceById, getWorkspacesById } from '@/features/workspaces/services';
