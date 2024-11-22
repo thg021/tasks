@@ -1,12 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { createWorkspaceSchema, updateWorkspaceSchema } from "@/features/workspaces/schemas";
+import { createWorkspaceSchema } from "@/features/workspaces/schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { MemberRole } from "@/features/members/types";
-import { filter, map, size } from "lodash";
-import { db } from "@/lib/db.prisma";
-import { createWorkspace, deleteWorkspace, getWorkspaceById, getWorkspacesById } from "@/features/workspaces/services";
-import type { Prisma } from "@prisma/client";
+import { map, size } from "lodash";
+import { createWorkspace } from "@/features/workspaces/services";
 import type { CreateWorkspaceProps } from "@/features/workspaces/types";
 import { getMemberById } from "@/features/members/services/get-member-by-id";
 import { getMembers } from "../services/get-members";

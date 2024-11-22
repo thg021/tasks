@@ -8,7 +8,7 @@ export const useGetWorkspaces = () => {
     queryKey: ["workspaces"],
     queryFn: async () => {
       const response = await client.api.workspace["$get"]();
-
+     
       if (!response.ok) {
         return {
           data: [],

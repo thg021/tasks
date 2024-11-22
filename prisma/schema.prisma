@@ -67,6 +67,7 @@ model Workspace {
   updated   DateTime @updatedAt
 
   members   Member[]
+  projects  Project[]
 }
 
 model Member {
@@ -77,6 +78,17 @@ model Member {
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspaces  Workspace[]
 }
+
+model Project {
+  id        String   @id @default(cuid())
+  name      String
+  workspaceId  String
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+  workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+}
+
 
 // model MemberWorkspace {
 //   memberId    String

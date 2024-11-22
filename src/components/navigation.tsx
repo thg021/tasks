@@ -65,7 +65,7 @@ export const Navigation = () => {
                     "size-5 text-neutral-500 hover:text-neutral-900"
                   )}
                 />
-                <span>{label}</span>
+                <span className="text-sm">{label}</span>
               </div>
             </Link>
           </li>

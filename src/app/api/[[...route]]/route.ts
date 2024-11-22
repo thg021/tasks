@@ -6,6 +6,7 @@ import { authHandler, verifyAuth } from '@hono/auth-js'
 import authRoutes from "@/features/auth/server/route";
 import workspacesRoutes from "@/features/workspaces/server/route";
 import membersRoutes from '@/features/members/server/route';
+import projectsRoutes from '@/features/projects/server/route';
 
 //export const runtime = "edge";
 
@@ -14,7 +15,8 @@ const app = new Hono().basePath("/api");
 const routes = app
   .route("/authenticated", authRoutes)
   .route("/workspace", workspacesRoutes)
-  .route("/members", membersRoutes);
+  .route("/members", membersRoutes)
+ .route("/projects", projectsRoutes)
 
 app.use('/api/auth/*', authHandler())
 

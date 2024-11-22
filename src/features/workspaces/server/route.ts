@@ -148,11 +148,7 @@ const app = new Hono()
     }, 401);
   }
 
-  deleteWorkspace({ workspaceId });
-
-  await db.workspace.delete({
-    where: { id: workspaceId }
-   });
+  await deleteWorkspace({ workspaceId });
 
   return c.json({
     data: workspaceId,
