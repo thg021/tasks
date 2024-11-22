@@ -1,43 +1,43 @@
-"use client";
+'use client';
 
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { cn } from "@/lib/utils";
-import { map } from "lodash";
-import { SettingsIcon, UserIcon } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   GoCheckCircle,
   GoCheckCircleFill,
   GoHome,
-  GoHomeFill,
-} from "react-icons/go";
+  GoHomeFill
+} from 'react-icons/go';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { map } from 'lodash';
+import { SettingsIcon, UserIcon } from 'lucide-react';
+import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
+import { cn } from '@/lib/utils';
 
 const routes = [
   {
-    label: "Início",
-    href: "",
+    label: 'Início',
+    href: '',
     icon: GoHome,
-    activeIcon: GoHomeFill,
+    activeIcon: GoHomeFill
   },
   {
-    label: "Tarefas",
-    href: "/tasks",
+    label: 'Tarefas',
+    href: '/tasks',
     icon: GoCheckCircle,
-    activeIcon: GoCheckCircleFill,
+    activeIcon: GoCheckCircleFill
   },
   {
-    label: "Configurações",
-    href: "/settings",
+    label: 'Configurações',
+    href: '/settings',
     icon: SettingsIcon,
-    activeIcon: SettingsIcon,
+    activeIcon: SettingsIcon
   },
   {
-    label: "Equipe",
-    href: "/members",
+    label: 'Equipe',
+    href: '/members',
     icon: UserIcon,
-    activeIcon: UserIcon,
-  },
+    activeIcon: UserIcon
+  }
 ];
 
 export const Navigation = () => {
@@ -55,14 +55,14 @@ export const Navigation = () => {
             <Link href={fullHref}>
               <div
                 className={cn(
-                  "flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-primary transition text-neutral-500 hover:text-neutral-900",
+                  'flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-primary transition text-neutral-500 hover:text-neutral-900',
                   isActive &&
-                    "bg-white shadow-sm hover:opacity-100 text-primary"
+                    'bg-white shadow-sm hover:opacity-100 text-primary'
                 )}
               >
                 <Icon
                   className={cn(
-                    "size-5 text-neutral-500 hover:text-neutral-900"
+                    'size-5 text-neutral-500 hover:text-neutral-900'
                   )}
                 />
                 <span className="text-sm">{label}</span>

@@ -1,30 +1,27 @@
-"use client";
-import { useRef } from "react";
-import { useForm } from "react-hook-form";
-import Image from "next/image";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { zodResolver } from "@hookform/resolvers/zod";
-
+'use client';
+import { useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { useCreateProject } from '@/features/projects/api/use-create-project';
 import {
   createProjectSchema,
-  type CreateProjectSchemaProps,
-} from "@/features/projects/schemas";
-import { Separator } from "@/components/ui/separator";
-
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { useCreateProject } from "@/features/projects/api/use-create-project";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+  type CreateProjectSchemaProps
+} from '@/features/projects/schemas';
+import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 type CreateProjectFormProps = {
   onCancel?: () => void;
@@ -36,14 +33,14 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
   const form = useForm<CreateProjectSchemaProps>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
-      name: "",
-    },
+      name: ''
+    }
   });
 
   const onSubmit = (values: CreateProjectSchemaProps) => {
     const finalValues = {
       name: values.name,
-      workspaceId: workspaceId,
+      workspaceId
     };
     createProject(finalValues, {
       onSuccess: ({ data }) => {
@@ -52,7 +49,7 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
       },
       onError: (error) => {
         console.error(error);
-      },
+      }
     });
   };
 
@@ -91,7 +88,7 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
                 onClick={onCancel}
                 size="lg"
                 variant="secondary"
-                className={cn(!onCancel && "invisible")}
+                className={cn(!onCancel && 'invisible')}
               >
                 Cancelar
               </Button>

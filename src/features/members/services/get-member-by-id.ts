@@ -1,4 +1,4 @@
-import 'server-only'
+import 'server-only';
 import { db } from '@/lib/db.prisma';
 
 type GetMemberByIdProps = {
@@ -11,6 +11,6 @@ export const getMemberById = async ({ userId }: GetMemberByIdProps) => await db.
   },
   include: {
     user: true,
-    workspaces: true,
+    workspaces: true
   }
 });

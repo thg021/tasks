@@ -1,4 +1,4 @@
-import 'server-only'
+import 'server-only';
 import { db } from '@/lib/db.prisma';
 
 type GetProjects = {
@@ -7,6 +7,6 @@ type GetProjects = {
 
 export const getProjects = async ({ workspaceId }: GetProjects) => await db.project.findMany({
   where: {
-    workspaceId, 
+    workspaceId 
   }
 });

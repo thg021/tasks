@@ -1,31 +1,31 @@
-import { DottedSeparator } from "@/components/dotted-separator";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  RegisterSchema,
-  type RegisterSchemaProps,
-} from "@/features/auth/schemas";
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
+import { DottedSeparator } from '@/components/dotted-separator';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useRegister } from "@/features/auth/api/use-register";
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useRegister } from '@/features/auth/api/use-register';
+import {
+  RegisterSchema,
+  type RegisterSchemaProps
+} from '@/features/auth/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const SignUpCard = () => {
   const { mutate } = useRegister();
   const form = useForm<RegisterSchemaProps>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      name: "",
-    },
+      email: '',
+      password: '',
+      name: ''
+    }
   });
 
   const onSubmit = (values: RegisterSchemaProps) => {
@@ -33,11 +33,11 @@ export const SignUpCard = () => {
   };
 
   return (
-    <Card className="size-full md:w-[487px] border-none shadow-none">
+    <Card className="size-full border-none shadow-none md:w-[487px]">
       <CardHeader>
         <CardTitle>Criar nova conta</CardTitle>
       </CardHeader>
-      <div className="flex space-y-4 flex-col px-7 mb-6">
+      <div className="mb-6 flex flex-col space-y-4 px-7">
         <DottedSeparator />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

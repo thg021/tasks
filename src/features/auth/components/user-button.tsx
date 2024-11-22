@@ -1,23 +1,23 @@
-"use client";
-import { Avatar } from "@/components/ui/avatar";
-import { useCurrent } from "@/features/auth/api/use-current";
-import { Loader, LogOutIcon } from "lucide-react";
-import { AvatarFallback } from "@radix-ui/react-avatar";
+'use client';
+import { signOut } from 'next-auth/react';
+import { Loader, LogOutIcon } from 'lucide-react';
+import { Avatar } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { signOut } from "next-auth/react";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { useCurrent } from '@/features/auth/api/use-current';
+import { AvatarFallback } from '@radix-ui/react-avatar';
+import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 export const UserButton = () => {
   const { data: user, isLoading } = useCurrent();
-  const onSignOut = () => signOut({ redirectTo: "/sign-in" });
+  const onSignOut = () => signOut({ redirectTo: '/sign-in' });
 
   if (isLoading) {
     return (
-      <div className="size-10 rounded-full flex items-center justify-center bg-neutral-200 border border-neutral-300">
+      <div className="flex size-10 items-center justify-center rounded-full border border-neutral-300 bg-neutral-200">
         <Loader className="size-4 animate-spin" />
       </div>
     );
@@ -28,12 +28,12 @@ export const UserButton = () => {
   const { name, email } = user;
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
-    : email?.charAt(0).toUpperCase() ?? "T";
+    : email?.charAt(0).toUpperCase() ?? 'T';
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger className="outline-none relative">
-        <Avatar className="size-10 hover:opacity-70 cursor-pointer transition border border-neutral-300">
-          <AvatarFallback className="bg-neutral-200 w-full font-medium text-neutral-500 flex items-center justify-center">
+      <DropdownMenuTrigger className="relative outline-none">
+        <Avatar className="size-10 cursor-pointer border border-neutral-300 transition hover:opacity-70">
+          <AvatarFallback className="flex w-full items-center justify-center bg-neutral-200 font-medium text-neutral-500">
             {avatarFallback}
           </AvatarFallback>
         </Avatar>
@@ -44,9 +44,9 @@ export const UserButton = () => {
         className="w-60"
         sideOffset={10}
       >
-        <div className="flex items-center flex-col justify-center gap-2 px-2.5 py-4">
-          <Avatar className="size-10 hover:opacity-70 cursor-pointer transition border border-neutral-300">
-            <AvatarFallback className="bg-neutral-200 w-full font-medium text-neutral-500 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-2 px-2.5 py-4">
+          <Avatar className="size-10 cursor-pointer border border-neutral-300 transition hover:opacity-70">
+            <AvatarFallback className="flex w-full items-center justify-center bg-neutral-200 font-medium text-neutral-500">
               {avatarFallback}
             </AvatarFallback>
           </Avatar>
@@ -58,9 +58,9 @@ export const UserButton = () => {
         <Separator className="mt-1" />
         <DropdownMenuItem
           onClick={onSignOut}
-          className="h-10 flex cursor-pointer items-center text-rose-600"
+          className="flex h-10 cursor-pointer items-center text-rose-600"
         >
-          <LogOutIcon className="size-4 mr-2" />
+          <LogOutIcon className="mr-2 size-4" />
           Sair
         </DropdownMenuItem>
       </DropdownMenuContent>

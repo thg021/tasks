@@ -1,23 +1,23 @@
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
-import { createWorkspaceSchema } from "@/features/workspaces/schemas";
-import { sessionMiddleware } from "@/lib/session-middleware";
-import { MemberRole } from "@/features/members/types";
-import { map, size } from "lodash";
-import { createWorkspace } from "@/features/workspaces/services";
-import type { CreateWorkspaceProps } from "@/features/workspaces/types";
-import { getMemberById } from "@/features/members/services/get-member-by-id";
-import { getMembers } from "../services/get-members";
-import { z } from "zod";
+import { Hono } from 'hono';
+import { map, size } from 'lodash';
+import { z } from 'zod';
+import { getMemberById } from '@/features/members/services/get-member-by-id';
+import { MemberRole } from '@/features/members/types';
+import { createWorkspaceSchema } from '@/features/workspaces/schemas';
+import { createWorkspace } from '@/features/workspaces/services';
+import type { CreateWorkspaceProps } from '@/features/workspaces/types';
+import { sessionMiddleware } from '@/lib/session-middleware';
+import { zValidator } from '@hono/zod-validator';
+import { getMembers } from '../services/get-members';
 
 const app = new Hono()
-.get("/", sessionMiddleware, zValidator('query', z.object({ workspaceId: z.string() })), async (c) => {
-  const user = c.get("user");
+.get('/', sessionMiddleware, zValidator('query', z.object({ workspaceId: z.string() })), async (c) => {
+  const user = c.get('user');
   const {workspaceId} = c.req.valid('query');
 
-  if (user.role !== "ADMIN") {
+  if (user.role !== 'ADMIN') {
         return c.json({ 
-      error: "Não autorizado: Você não tem permissão para listar os usuários" 
+      error: 'Não autorizado: Você não tem permissão para listar os usuários' 
     }, 401);
   }
 
@@ -25,12 +25,12 @@ const app = new Hono()
   const filteredMembers = map(members, (member) => {
     return {
       id: member.id,
-      name: member.user.name || "",
+      name: member.user.name || '',
       email: member.user.email,
       role: member.user.role,
       image: member.user.image,
-      emailVerified: member.user.emailVerified,
-    }
+      emailVerified: member.user.emailVerified
+    };
   });
 
   return c.json({
@@ -39,10 +39,10 @@ const app = new Hono()
   });
 })
 
-.get("/:memberId", sessionMiddleware, async (c) => {
-  const user = c.get("user");
+.get('/:memberId', sessionMiddleware, async (c) => {
+  const user = c.get('user');
  
-  const { memberId } = c.req.param()
+  const { memberId } = c.req.param();
   const member = await getMemberById({ userId: memberId } );
   
    return c.json({
@@ -50,12 +50,12 @@ const app = new Hono()
     total: size(member)
   });
 })
-.post("/", zValidator("form", createWorkspaceSchema), sessionMiddleware, async (c) => {
-  const user = c.get("user");
-  const { name, image } = c.req.valid("form");
+.post('/', zValidator('form', createWorkspaceSchema), sessionMiddleware, async (c) => {
+  const user = c.get('user');
+  const { name, image } = c.req.valid('form');
 
   let uploadedImageUrl: string | undefined;
-  const createWorkspacesData: CreateWorkspaceProps = { name, userId: user.id, role: MemberRole.ADMIN }
+  const createWorkspacesData: CreateWorkspaceProps = { name, userId: user.id, role: MemberRole.ADMIN };
   // if (image instanceof File) {
   //   const file = await storage.createFile(IMAGES_ID, ID.unique(), image); 
   //   const arrayBuffer = await storage.getFilePreview(IMAGES_ID, file.$id);
@@ -67,10 +67,10 @@ const app = new Hono()
   const workspace = await createWorkspace(createWorkspacesData);
   
   return c.json({
-    data: workspace,
+    data: workspace
  
   });
-})
+});
 // .patch("/:workspaceId", sessionMiddleware, zValidator('form', updateWorkspaceSchema), async (c) => {
 //   const user = c.get("user");
 //   // // const storage = c.get("storage");
@@ -163,4 +163,4 @@ const app = new Hono()
 
 // })
 
-export default app
+export default app;

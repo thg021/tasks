@@ -1,13 +1,13 @@
 export const publicRoutes = [
-  "/about",
+  '/about'
 ];
 
 export const authRoutes = [
-  "/sign-in",
-  "/sign-up",
-  "/error",
+  '/sign-in',
+  '/sign-up',
+  '/error'
 ];
 
-export const apiAuthPrefix = "/api/auth";
+export const apiAuthPrefix = '/api/auth';
 
-export const DEFAULT_LOGIN_REDIRECT = "/";
+export const DEFAULT_LOGIN_REDIRECT = '/';

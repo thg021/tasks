@@ -1,36 +1,34 @@
-"use client";
-import { useRef } from "react";
-import { useForm } from "react-hook-form";
-import Image from "next/image";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { zodResolver } from "@hookform/resolvers/zod";
-
+'use client';
+import { useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { ImageIcon } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { useCreateWorkspace } from '@/features/workspaces/api/use-create-workspaces';
 import {
   createWorkspaceSchema,
   updateWorkspaceSchema,
   type CreateWorkspaceSchemaProps,
-  type UpdateWorkspaceSchemaProps,
-} from "@/features/workspaces/schemas";
-import { useCreateWorkspace } from "@/features/workspaces/api/use-create-workspaces";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ImageIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import type { Workspace } from "@/features/workspaces/types";
-import { useUpdateWorkspace } from "../api/use-update-workspaces";
-import { useDeleteWorkspace } from "../api/use-delete-workspaces";
-import { useConfirm } from "@/hooks/use-confirm";
+  type UpdateWorkspaceSchemaProps
+} from '@/features/workspaces/schemas';
+import type { Workspace } from '@/features/workspaces/types';
+import { useConfirm } from '@/hooks/use-confirm';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useDeleteWorkspace } from '../api/use-delete-workspaces';
+import { useUpdateWorkspace } from '../api/use-update-workspaces';
 
 type EditWorkspaceFormProps = {
   onCancel?: () => void;
@@ -38,16 +36,16 @@ type EditWorkspaceFormProps = {
 };
 export const EditWorkspaceForm = ({
   onCancel,
-  initialValues,
+  initialValues
 }: EditWorkspaceFormProps) => {
   const { mutate: updateWorkspace, isPending } = useUpdateWorkspace();
   const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
     useDeleteWorkspace();
 
   const [DeleteDialog, confirmDelete] = useConfirm(
-    "Excluir workspace",
-    "Tem certeza que deseja excluir o workspace?",
-    "destructive"
+    'Excluir workspace',
+    'Tem certeza que deseja excluir o workspace?',
+    'destructive'
   );
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,48 +54,48 @@ export const EditWorkspaceForm = ({
     resolver: zodResolver(updateWorkspaceSchema),
     defaultValues: {
       ...initialValues,
-      image: initialValues.imageUrl ?? "",
-    },
+      image: initialValues.imageUrl ?? ''
+    }
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 1048576) {
-        form.setError("image", {
-          type: "manual",
-          message: "A imagem deve ter no máximo 1MB",
+        form.setError('image', {
+          type: 'manual',
+          message: 'A imagem deve ter no máximo 1MB'
         });
         return;
       }
 
       // Limpar erro anterior se existir
-      form.clearErrors("image");
-      form.setValue("image", file);
+      form.clearErrors('image');
+      form.setValue('image', file);
     }
   };
 
   const handleRemoveImage = () => {
-    form.setValue("image", "");
+    form.setValue('image', '');
     if (inputRef.current) {
-      inputRef.current.value = "";
+      inputRef.current.value = '';
     }
   };
 
   const handleDelete = async () => {
     const ok = await confirmDelete();
     if (!ok) return;
-    console.log("Deletou");
+    console.log('Deletou');
     deleteWorkspace(
       { param: { workspaceId: initialValues.id } },
       {
         onSuccess: () => {
-          router.push("/");
-          window.location.href = "/";
+          router.push('/');
+          window.location.href = '/';
         },
         onError: (error) => {
           console.error(error);
-        },
+        }
       }
     );
     // }
@@ -106,20 +104,20 @@ export const EditWorkspaceForm = ({
   const onSubmit = (values: UpdateWorkspaceSchemaProps) => {
     const finalValues = {
       ...values,
-      image: values.image instanceof File ? values.image : undefined,
+      image: values.image instanceof File ? values.image : undefined
     };
 
     updateWorkspace(
       { form: finalValues, param: { workspaceId: initialValues.id } },
       {
         onSuccess: ({ data }) => {
-          form.reset({ ...data, image: data.imageUrl || "" });
+          form.reset({ ...data, image: data.imageUrl || '' });
           // router.refresh();
           //router.push(`/workspaces/${data.id}`);
         },
         onError: (error) => {
           console.error(error);
-        },
+        }
       }
     );
   };
@@ -167,12 +165,12 @@ export const EditWorkspaceForm = ({
                         <div className="flex flex-col gap-y-2">
                           <div className="flex items-center gap-x-5">
                             {field.value ? (
-                              <div className="size-[72px] relative rounded-md overflow-hidden">
+                              <div className="relative size-[72px] overflow-hidden rounded-md">
                                 <button
                                   onClick={handleRemoveImage}
-                                  className="bg-none group flex transition-colors hover:bg-slate-900/85 size-[72px] absolute cursor-pointer  top-0 z-10 items-center justify-center"
+                                  className="group absolute top-0 z-10 flex size-[72px] cursor-pointer items-center  justify-center bg-none transition-colors hover:bg-slate-900/85"
                                 >
-                                  <span className="text-xs text-white font-bold hidden group-hover:block transition-all">
+                                  <span className="hidden text-xs font-bold text-white transition-all group-hover:block">
                                     Remover
                                   </span>
                                 </button>
@@ -217,7 +215,7 @@ export const EditWorkspaceForm = ({
                                 disabled={isPending}
                                 variant="outline"
                                 size="icon"
-                                className="w-fit mt-2 px-2"
+                                className="mt-2 w-fit px-2"
                                 onClick={() => inputRef.current?.click()}
                               >
                                 Upload image
@@ -237,7 +235,7 @@ export const EditWorkspaceForm = ({
                   onClick={onCancel}
                   size="lg"
                   variant="secondary"
-                  className={cn(!onCancel && "invisible")}
+                  className={cn(!onCancel && 'invisible')}
                 >
                   Cancelar
                 </Button>
@@ -254,7 +252,7 @@ export const EditWorkspaceForm = ({
         <CardHeader className="flex px-7">
           <CardTitle className="text-xl font-bold">Danger zone</CardTitle>
         </CardHeader>
-        <CardContent className="px-7 flex-col flex space-y-4">
+        <CardContent className="flex flex-col space-y-4 px-7">
           <p className="text-sm text-zinc-600">
             Ao deletar um workspace, todos os seus dados serão perdidos
           </p>

@@ -1,4 +1,4 @@
-import 'server-only'
+import 'server-only';
 import { db } from '@/lib/db.prisma';
 
 export const getWorkspacesById = async (userId: string) => await db.workspace.findMany({
@@ -12,11 +12,11 @@ export const getWorkspacesById = async (userId: string) => await db.workspace.fi
     include: {
       members: {
         include: {
-          user: true,
+          user: true
         }
-      },
+      }
     },
     orderBy: {
       created: 'desc'
     }
-  })
+  });

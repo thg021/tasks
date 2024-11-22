@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { ResponsiveModal } from "@/components/responsive-modal";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { useState } from 'react';
+import { ResponsiveModal } from '@/components/responsive-modal';
+import { Button, type ButtonProps } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CardTitle
+} from '@/components/ui/card';
 
 export const useConfirm = (
   title: string,
   message: string,
-  variant: ButtonProps["variant"] = "default"
+  variant: ButtonProps['variant'] = 'default'
 ) => {
   const [promise, setPromise] = useState<{
-    resolve: (value: Boolean) => void;
+    resolve: (value: boolean) => void;
   } | null>(null);
 
   const confirm = () =>
@@ -49,7 +49,7 @@ export const useConfirm = (
             <CardTitle>{title}</CardTitle>
             <CardDescription>{message}</CardDescription>
           </CardHeader>
-          <div className="flex w-full flex-col lg:flex-row items-center justify-end gap-2 pt-4">
+          <div className="flex w-full flex-col items-center justify-end gap-2 pt-4 lg:flex-row">
             <Button
               onClick={handleCancel}
               variant="outline"

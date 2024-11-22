@@ -1,8 +1,8 @@
-import "server-only";
+import 'server-only';
 
-import { createMiddleware } from "hono/factory";
-import { getToken } from 'next-auth/jwt'
-import type { Role } from "@prisma/client";
+import { getToken } from 'next-auth/jwt';
+import { createMiddleware } from 'hono/factory';
+import type { Role } from '@prisma/client';
 
 type User = {
   id: string
@@ -19,10 +19,10 @@ type AdditionalContext = {
 
 export const sessionMiddleware = createMiddleware<AdditionalContext>(
   async (c, next) => {
-    const token = await getToken({ req: c.req.raw, secret: process.env.AUTH_SECRET })
+    const token = await getToken({ req: c.req.raw, secret: process.env.AUTH_SECRET });
   
     if (!token) {
-      return c.json({ error: "Acesso não autorizado" }, 401);
+      return c.json({ error: 'Acesso não autorizado' }, 401);
     }
 
     const user = {
@@ -30,9 +30,9 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
       name: token.name!,
       email: token.email!,
       role: token.role,
-      avatarUrl: token.picture ?? undefined,
-    }
-    c.set("user", user);
+      avatarUrl: token.picture ?? undefined
+    };
+    c.set('user', user);
     await next();
   }
 );

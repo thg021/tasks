@@ -1,9 +1,9 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton';
 
 const LoadingWorkspaces = () => {
   return (
     <div className="min-h-screen">
-      <div className="flex flex-col space-y-3 w-full">
+      <div className="flex w-full flex-col space-y-3">
         {/* Imagem */}
         <Skeleton className="h-[200px] w-full rounded-xl" />
 

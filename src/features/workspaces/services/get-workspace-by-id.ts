@@ -1,4 +1,4 @@
-import 'server-only'
+import 'server-only';
 import { db } from '@/lib/db.prisma';
 
 type GetWorkspaceByIdRequest = {
@@ -14,5 +14,5 @@ export const getWorkspaceById = async ({ userId, workspaceId}: GetWorkspaceByIdR
           userId
         }
       }
-    },
-  })
+    }
+  });

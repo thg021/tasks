@@ -1,8 +1,8 @@
-import Credentials from "next-auth/providers/credentials";
-import type { NextAuthConfig } from "next-auth";
-import bcrypt from "bcryptjs";
-import { LoginSchema } from "@/features/auth/schemas";
-import { getUserByEmail } from "@/features/auth/services/user";
+import type { NextAuthConfig } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
+import { LoginSchema } from '@/features/auth/schemas';
+import { getUserByEmail } from '@/features/auth/services/user';
 
 export default {
   providers: [
@@ -22,7 +22,7 @@ export default {
         if (!passwordsMatch) return null;
 
         return user;
-      },
-    }),
+      }
+    })
   ]
 } satisfies NextAuthConfig;

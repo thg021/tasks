@@ -1,17 +1,17 @@
-"use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useGetMembers } from "@/features/members/api/use-get-members";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { MemberAvatar } from "./member-avatar";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+'use client';
+import { MoreHorizontal } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { useGetMembers } from '@/features/members/api/use-get-members';
+import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
+import { MemberAvatar } from './member-avatar';
 
 export const MembersList = () => {
   const workspaceId = useWorkspaceId();
@@ -39,9 +39,9 @@ export const MembersList = () => {
                 <p className="text-sm font-medium">{member.name}</p>
                 <p className="text-xs text-muted-foreground">{member.email}</p>
               </div>
-              <div className="flex gap-2 items-center ml-auto">
-                {member.role === "ADMIN" && (
-                  <span className="ml-auto text-xs bg-emerald-300 py-1 px-2 text-emerald-900 rounded-md">
+              <div className="ml-auto flex items-center gap-2">
+                {member.role === 'ADMIN' && (
+                  <span className="ml-auto rounded-md bg-emerald-300 px-2 py-1 text-xs text-emerald-900">
                     Adiministrador
                   </span>
                 )}

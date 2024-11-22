@@ -1,1 +1,1 @@
-export const AUTH_COOKIE = "cwa-tasks-session";
+export const AUTH_COOKIE = 'cwa-tasks-session';

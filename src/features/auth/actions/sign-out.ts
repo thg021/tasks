@@ -1,5 +1,5 @@
-"use server";
+'use server';
 
-import { signOut } from "@/lib/auth";
+import { signOut } from '@/lib/auth';
 
-export const logout = async () => await signOut({ redirectTo: "/sign-in" });
+export const logout = async () => await signOut({ redirectTo: '/sign-in' });

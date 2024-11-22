@@ -1,15 +1,15 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function StandaloneLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-neutral-100 min-h-screen">
+    <div className="min-h-screen bg-neutral-100">
       <div className="mx-auto max-w-screen-2xl p-4">
-        <nav className="flex justify-between items-center h-[73px]">
+        <nav className="flex h-[73px] items-center justify-between">
           <Link href="/" className="text-2xl font-semibold">
             <Image src="/logo.svg" alt="logo" width={34} height={34} />
           </Link>

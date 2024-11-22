@@ -1,36 +1,36 @@
-"use client";
-import { useTransition } from "react";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema, type LoginSchemaProps } from "@/features/auth/schemas";
-import { useForm } from "react-hook-form";
+'use client';
+import { useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { loginAction } from "@/features/auth/actions/login";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { loginAction } from '@/features/auth/actions/login';
+import { LoginSchema, type LoginSchemaProps } from '@/features/auth/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const SignInCard = () => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const session = useSession();
-  if (session.data && session.status === "authenticated") {
-    router.push("/");
+  if (session.data && session.status === 'authenticated') {
+    router.push('/');
   }
   const form = useForm<LoginSchemaProps>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
-      password: "",
-    },
+      email: '',
+      password: ''
+    }
   });
 
   const onSubmit = (values: LoginSchemaProps) => {
@@ -46,11 +46,11 @@ export const SignInCard = () => {
   };
 
   return (
-    <Card className="size-full md:w-[487px] border-none shadow-none">
+    <Card className="size-full border-none shadow-none md:w-[487px]">
       <CardHeader>
         <CardTitle>Bem vindo de volta</CardTitle>
       </CardHeader>
-      <div className="flex space-y-4 flex-col px-7 mb-6">
+      <div className="mb-6 flex flex-col space-y-4 px-7">
         <Separator />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

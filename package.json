@@ -64,7 +64,13 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.16",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-import-helpers": "^2.0.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-tailwindcss": "^3.17.5",
     "postcss": "^8",
+    "prettier-plugin-tailwindcss": "^0.6.9",
     "prisma": "^5.22.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

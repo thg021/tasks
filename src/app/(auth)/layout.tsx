@@ -1,17 +1,16 @@
-"use client";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-import { Button } from "@/components/ui/button";
+'use client';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 export default function AuthLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isSignPage = pathname === "/sign-in";
+  const isSignPage = pathname === '/sign-in';
   return (
     <main className="min-h-screen bg-neutral-100">
       <div className="mx-auto max-w-screen-2xl p-4">
@@ -19,8 +18,8 @@ export default function AuthLayout({
           <Image src="./logo.svg" alt="Logo" width={32} height={32} />
 
           <Button variant="ghost" asChild>
-            <Link href={isSignPage ? "/sign-up" : "/sign-in"}>
-              {isSignPage ? "Criar nova conta" : "Fazer login"}
+            <Link href={isSignPage ? '/sign-up' : '/sign-in'}>
+              {isSignPage ? 'Criar nova conta' : 'Fazer login'}
             </Link>
           </Button>
         </nav>

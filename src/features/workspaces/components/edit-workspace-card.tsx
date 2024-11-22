@@ -1,5 +1,5 @@
-"use client";
-import { useGetWorkspaceById } from "../api/use-get-workspace-by-id";
+'use client';
+import { useGetWorkspaceById } from '../api/use-get-workspace-by-id';
 
 type EditWorkspaceCardProps = {
   workspaceId: string;

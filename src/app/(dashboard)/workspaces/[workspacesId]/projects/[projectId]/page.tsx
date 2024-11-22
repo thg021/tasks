@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { getUserCurrentSession } from "@/features/auth/actions/get-user-current-session";
-import { getProject } from "@/features/projects/actions/get-project";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { getUserCurrentSession } from '@/features/auth/actions/get-user-current-session';
+import { getProject } from '@/features/projects/actions/get-project';
 
 type WorkspaceIdSettingPageProps = {
   params: {
@@ -11,14 +11,14 @@ type WorkspaceIdSettingPageProps = {
   };
 };
 export default async function WorkspaceIdSettingPage({
-  params,
+  params
 }: WorkspaceIdSettingPageProps) {
   const user = await getUserCurrentSession();
 
   const project = await getProject({
     projectId: params.projectId,
     workspaceId: params.workspaceId,
-    user,
+    user
   });
 
   if (!project) {
@@ -27,7 +27,7 @@ export default async function WorkspaceIdSettingPage({
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="flex items-center justify-between w-full">
+      <div className="flex w-full items-center justify-between">
         <h1>{project.name}</h1>
         <Button>
           <PencilIcon />

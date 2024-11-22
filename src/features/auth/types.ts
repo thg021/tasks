@@ -1,4 +1,4 @@
-import type { Session } from "next-auth";
+import type { Session } from 'next-auth';
 
-export type User = Session["user"] | null;
+export type User = Session['user'] | null;
 

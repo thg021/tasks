@@ -1,14 +1,14 @@
-"use client";
-import React from "react";
-import { ArrowLeft, AlertCircle, WifiOff } from "lucide-react";
+'use client';
+import React from 'react';
+import { ArrowLeft, AlertCircle, WifiOff } from 'lucide-react';
 
 const ErrorPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-lg w-full space-y-8 text-center">
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="w-full max-w-lg space-y-8 text-center">
         {/* Error Icon */}
         <div className="flex justify-center">
-          <WifiOff className="h-8 w-8 text-slate-800" />
+          <WifiOff className="size-8 text-slate-800" />
         </div>
 
         {/* Error Message */}
@@ -20,17 +20,17 @@ const ErrorPage = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <button
             onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-black bg-white hover:bg-gray-100 transition-colors duration-200"
+            className="inline-flex items-center justify-center rounded-lg border border-transparent bg-white px-6 py-3 text-base font-medium text-black transition-colors duration-200 hover:bg-gray-100"
           >
-            <ArrowLeft className="h-5 w-5 mr-2" />
+            <ArrowLeft className="mr-2 size-5" />
             Voltar
           </button>
           <button
-            onClick={() => (window.location.href = "/")}
-            className="inline-flex items-center justify-center px-6 py-3 border border-gray-700 text-base font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 transition-colors duration-200"
+            onClick={() => (window.location.href = '/')}
+            className="inline-flex items-center justify-center rounded-lg border border-gray-700 bg-gray-900 px-6 py-3 text-base font-medium text-white transition-colors duration-200 hover:bg-gray-800"
           >
             Ir para Home
           </button>

@@ -1,7 +1,7 @@
-"use-client";
-import { useMedia } from "react-use";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+'use-client';
+import { useMedia } from 'react-use';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 type ResponsiveModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -11,18 +11,18 @@ type ResponsiveModalProps = {
 export const ResponsiveModal = ({
   children,
   onOpenChange,
-  open,
+  open
 }: ResponsiveModalProps) => {
-  const isDesktop = useMedia("(min-width: 1024px)", true);
+  const isDesktop = useMedia('(min-width: 1024px)', true);
 
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogTitle>{""}</DialogTitle>
+        <DialogTitle>{''}</DialogTitle>
         <DialogContent
           aria-describedby="Criar novo workspace"
           aria-description="Description of the dialog"
-          className="w-full sm:max-w-lg p-o border-none overflow-y-auto hide-scrollbar max-h-[85vh]"
+          className="p-o hide-scrollbar max-h-[85vh] w-full overflow-y-auto border-none sm:max-w-lg"
         >
           {children}
         </DialogContent>
@@ -35,7 +35,7 @@ export const ResponsiveModal = ({
         aria-describedby="Criar novo workspace"
         aria-description="Description of the dialog"
       >
-        <div className="overflow-y-auto hide-scrollbar max-h-[85vh]">
+        <div className="hide-scrollbar max-h-[85vh] overflow-y-auto">
           {children}
         </div>
       </DrawerContent>

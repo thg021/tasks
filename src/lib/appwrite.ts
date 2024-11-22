@@ -1,6 +1,6 @@
 //TODO: delete this file
-import "server-only";
-import { Client, Account, Databases } from "node-appwrite";
+import 'server-only';
+import { Client, Account, Databases } from 'node-appwrite';
 export async function createAdminClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -10,7 +10,7 @@ export async function createAdminClient() {
   return {
     get account() {
       return new Account(client);
-    },
+    }
   };
 }
 
@@ -31,5 +31,5 @@ export const getClientAPPWRITE = () =>  new Client()
       get database() {
         return new Databases(client);
       }
-    }
-  } 
+    };
+  }; 

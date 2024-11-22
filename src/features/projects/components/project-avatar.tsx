@@ -1,7 +1,7 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes } from 'react';
+import Image from 'next/image';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 type ProjectAvatarProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
@@ -16,11 +16,11 @@ export const ProjectAvatar = ({
 }: ProjectAvatarProps) => {
   return (
     <Avatar
-      className={cn("border border-neutral-200 size-8 rounded-md", className)}
+      className={cn('border border-neutral-200 size-8 rounded-md', className)}
     >
       <AvatarFallback
         className={cn(
-          "text-neutral-500 bg-neutral-200 flex justify-center items-center font-semibold text-xs rounded-md",
+          'text-neutral-500 bg-neutral-200 flex justify-center items-center font-semibold text-xs rounded-md',
           fallbackClassName
         )}
       >

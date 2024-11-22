@@ -1,7 +1,7 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes } from 'react';
+import Image from 'next/image';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 type WorkspaceAvatarProps = HTMLAttributes<HTMLDivElement> & {
   image?: string;
@@ -18,7 +18,7 @@ export const WorkspaceAvatar = ({
     return (
       <div
         className={cn(
-          "size-10 relative rounded-md overflow-hidden ",
+          'size-10 relative rounded-md overflow-hidden ',
           className
         )}
         {...rest}
@@ -34,8 +34,8 @@ export const WorkspaceAvatar = ({
     );
   }
   return (
-    <Avatar className={cn("size-8 rounded-md", className)}>
-      <AvatarFallback className="text-white bg-blue-600 font-semibold text-xs rounded-md">
+    <Avatar className={cn('size-8 rounded-md', className)}>
+      <AvatarFallback className="rounded-md bg-blue-600 text-xs font-semibold text-white">
         {name.substring(0, 2)}
       </AvatarFallback>
     </Avatar>

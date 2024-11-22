@@ -1,15 +1,15 @@
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db } from "@/lib/db.prisma";
-import { getUserById } from "@/features/auth/services/user";
-import authConfig from "@/lib/auth.config";
+import NextAuth from 'next-auth';
+import { getUserById } from '@/features/auth/services/user';
+import authConfig from '@/lib/auth.config';
+import { db } from '@/lib/db.prisma';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   debug: true,
   pages: {
-    signIn: "/sign-in",
-    signOut: "/sign-in",
-    error: "/error",
+    signIn: '/sign-in',
+    signOut: '/sign-in',
+    error: '/error'
   },
   events: {
     // async linkAccount({ user }) {
@@ -21,7 +21,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider !== "credentials") return true;
+      if (account?.provider !== 'credentials') return true;
       const existingUser = await getUserById(user.id!);
       if (!existingUser) return false;
 
@@ -47,9 +47,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       token.role = existingUser.role;
       return token;
-    },
+    }
   },
-  session: { strategy: "jwt" },
+  session: { strategy: 'jwt' },
   adapter: PrismaAdapter(db),
-  ...authConfig,
+  ...authConfig
 });

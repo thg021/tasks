@@ -13,26 +13,26 @@ export const getProject = async ({ projectId, workspaceId, user }: GetProjectPro
   try {
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
 
   const member = await getMemberByWorkspace({
     workspaceId,
-    userId: user.id,
+    userId: user.id
   });
 
   if (!member) {
-    throw new Error("Unauthorized: Invalid workspaceId");
+    throw new Error('Unauthorized: Invalid workspaceId');
   }
 
   const project = await getProjectService({
     projectId,
-    workspaceId,
+    workspaceId
   });
 
   return project;
   } catch (error) {
-    throw new Error("Error to get project");
+    throw new Error('Error to get project');
   }
   
- }
+ };

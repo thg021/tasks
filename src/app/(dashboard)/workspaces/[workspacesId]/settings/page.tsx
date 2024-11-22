@@ -1,8 +1,7 @@
-import { redirect } from "next/navigation";
-
-import { getUserCurrentSession } from "@/features/auth/actions/get-user-current-session";
-import { EditWorkspaceForm } from "@/features/workspaces/components/edit-workspace-form";
-import { getWorkspaceById } from "@/features/workspaces/services";
+import { redirect } from 'next/navigation';
+import { getUserCurrentSession } from '@/features/auth/actions/get-user-current-session';
+import { EditWorkspaceForm } from '@/features/workspaces/components/edit-workspace-form';
+import { getWorkspaceById } from '@/features/workspaces/services';
 
 type WorkspaceIdSettingPageProps = {
   params: {
@@ -10,12 +9,12 @@ type WorkspaceIdSettingPageProps = {
   };
 };
 export default async function WorkspaceIdSettingPage({
-  params,
+  params
 }: WorkspaceIdSettingPageProps) {
   const user = await getUserCurrentSession();
   const workspace = await getWorkspaceById({
     userId: user?.id,
-    workspaceId: params.workspacesId,
+    workspaceId: params.workspacesId
   });
 
   if (!workspace) redirect(`/workspaces/${params.workspacesId}`);

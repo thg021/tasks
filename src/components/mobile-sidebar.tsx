@@ -1,10 +1,10 @@
-"use client";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { MenuIcon } from "lucide-react";
-import { Sidebar } from "@/components/sidebar";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+'use client';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { MenuIcon } from 'lucide-react';
+import { Sidebar } from '@/components/sidebar';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
 export const MobileSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);

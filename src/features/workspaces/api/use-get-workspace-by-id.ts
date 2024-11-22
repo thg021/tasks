@@ -1,15 +1,15 @@
-import { client } from "@/lib/rpc";
-import { useQuery } from "@tanstack/react-query";
-import type { InferResponseType } from "hono/client";
-type WorkspaceResponse = InferResponseType<typeof client.api.workspace[":workspaceId"]["$get"], 200>;
+import type { InferResponseType } from 'hono/client';
+import { client } from '@/lib/rpc';
+import { useQuery } from '@tanstack/react-query';
+type WorkspaceResponse = InferResponseType<typeof client.api.workspace[':workspaceId']['$get'], 200>;
 
 export const useGetWorkspaceById = (workspaceId: string) => {
   const query = useQuery<WorkspaceResponse, Error>({
-    queryKey: ["workspace", workspaceId],
+    queryKey: ['workspace', workspaceId],
     queryFn: async (): Promise<WorkspaceResponse> => {
-      try { const response = await client.api.workspace[":workspaceId"]["$get"]({
+      try { const response = await client.api.workspace[':workspaceId']['$get']({
         param: {
-          workspaceId,
+          workspaceId
         }
       });
 
@@ -18,15 +18,15 @@ export const useGetWorkspaceById = (workspaceId: string) => {
       }
 
       const data = await response.json();
-      return data
+      return data;
         
       } catch (error) {
-        console.error("Error fetching workspace:", error);
+        console.error('Error fetching workspace:', error);
         throw error;
 
       }
      
-    },
+    }
   });
 
   return query;
