@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --max-warnings=0",
     "commit": "git add . && git cz && node .husky/gitpush.mjs",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.3",
