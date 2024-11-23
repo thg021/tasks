@@ -7,20 +7,11 @@ import { ImageIcon } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { useCreateWorkspace } from '@/features/workspaces/api/use-create-workspaces';
 import {
-  createWorkspaceSchema,
   updateWorkspaceSchema,
-  type CreateWorkspaceSchemaProps,
   type UpdateWorkspaceSchemaProps
 } from '@/features/workspaces/schemas';
 import type { Workspace } from '@/features/workspaces/types';
@@ -34,13 +25,9 @@ type EditWorkspaceFormProps = {
   onCancel?: () => void;
   initialValues: Workspace;
 };
-export const EditWorkspaceForm = ({
-  onCancel,
-  initialValues
-}: EditWorkspaceFormProps) => {
+export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceFormProps) => {
   const { mutate: updateWorkspace, isPending } = useUpdateWorkspace();
-  const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
-    useDeleteWorkspace();
+  const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } = useDeleteWorkspace();
 
   const [DeleteDialog, confirmDelete] = useConfirm(
     'Excluir workspace',
@@ -85,7 +72,6 @@ export const EditWorkspaceForm = ({
   const handleDelete = async () => {
     const ok = await confirmDelete();
     if (!ok) return;
-    console.log('Deletou');
     deleteWorkspace(
       { param: { workspaceId: initialValues.id } },
       {
@@ -127,11 +113,9 @@ export const EditWorkspaceForm = ({
       <DeleteDialog />
       <Card className="size-full border border-zinc-300 shadow-none">
         <CardHeader className="flex p-7">
-          <CardTitle className="text-xl font-bold">
-            {initialValues.name}
-          </CardTitle>
+          <CardTitle className="text-xl font-bold">{initialValues.name}</CardTitle>
         </CardHeader>
-        <div className=" px-7 ">
+        <div className="px-7">
           <Separator />
         </div>
         <CardContent className="p-7">
@@ -168,7 +152,8 @@ export const EditWorkspaceForm = ({
                               <div className="relative size-[72px] overflow-hidden rounded-md">
                                 <button
                                   onClick={handleRemoveImage}
-                                  className="group absolute top-0 z-10 flex size-[72px] cursor-pointer items-center  justify-center bg-none transition-colors hover:bg-slate-900/85"
+                                  className="group absolute top-0 z-10 flex size-[72px] cursor-pointer items-center justify-center bg-none transition-colors hover:bg-slate-900/85"
+                                  disabled={isDeletingWorkspace}
                                 >
                                   <span className="hidden text-xs font-bold text-white transition-all group-hover:block">
                                     Remover
@@ -258,12 +243,7 @@ export const EditWorkspaceForm = ({
           </p>
           <Separator />
           <div className="flex items-center justify-end">
-            <Button
-              type="button"
-              onClick={handleDelete}
-              size="lg"
-              variant="outline"
-            >
+            <Button type="button" onClick={handleDelete} size="lg" variant="outline">
               Deletar
             </Button>
           </div>

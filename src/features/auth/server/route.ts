@@ -14,9 +14,12 @@ const app = new Hono()
   .get('/current', sessionMiddleware, async (c) => {
     const user = c.get('user');
     if (!user) {
-      return c.json({
-        error: 'Acesso não autorizado'
-      }, 401);
+      return c.json(
+        {
+          error: 'Acesso não autorizado'
+        },
+        401
+      );
     }
     return c.json({
       data: user
@@ -28,9 +31,12 @@ const app = new Hono()
     const existingUser = await getUserByEmail(email);
 
     if (!existingUser) {
-      return c.json({
-        success: false
-      }, 401);
+      return c.json(
+        {
+          success: false
+        },
+        401
+      );
     }
 
     try {
@@ -40,21 +46,20 @@ const app = new Hono()
         redirectTo: DEFAULT_LOGIN_REDIRECT
       });
     } catch (error) {
-      let code: StatusCode = 500;
-      if (error instanceof AuthError) {
-        switch (error.type) {
-          case 'CredentialsSignin':
-            code = 401;
-          case 'AccessDenied':
-           code = 403; 
-          default:
-           code = 500;
-        }
-      }
-  
-      return c.json({
-        success: false
-      }, code);
+      const errorStatusMap: Record<string, StatusCode> = {
+        CredentialsSignin: 401,
+        AccessDenied: 403
+      };
+
+      const code: StatusCode =
+        error instanceof AuthError ? (errorStatusMap[error.type] ?? 500) : 500;
+
+      return c.json(
+        {
+          success: false
+        },
+        code
+      );
     }
     return c.json({
       success: true
@@ -62,15 +67,18 @@ const app = new Hono()
   })
   .post('/register', zValidator('json', RegisterSchema), async (c) => {
     const { name, email, password } = c.req.valid('json');
-   
+
     const hashedPassword = await hashPassword(password);
     const existingUser = await getUserByEmail(email);
 
     if (existingUser) {
-      return c.json({
-        success: false,
-        message: 'Email já cadastrado'
-      }, 401);
+      return c.json(
+        {
+          success: false,
+          message: 'Email já cadastrado'
+        },
+        401
+      );
     }
 
     await db.user.create({

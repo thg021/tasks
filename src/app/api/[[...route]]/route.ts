@@ -10,12 +10,12 @@ import { authHandler, verifyAuth } from '@hono/auth-js';
 //export const runtime = "edge";
 
 const app = new Hono().basePath('/api');
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const routes = app
   .route('/authenticated', authRoutes)
   .route('/workspace', workspacesRoutes)
   .route('/members', membersRoutes)
- .route('/projects', projectsRoutes);
+  .route('/projects', projectsRoutes);
 
 app.use('/api/auth/*', authHandler());
 

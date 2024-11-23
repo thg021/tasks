@@ -5,13 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { loginAction } from '@/features/auth/actions/login';
@@ -35,13 +29,7 @@ export const SignInCard = () => {
 
   const onSubmit = (values: LoginSchemaProps) => {
     startTransition(() => {
-      loginAction(values)
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      loginAction(values);
     });
   };
 
@@ -79,12 +67,7 @@ export const SignInCard = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="****"
-                          type="password"
-                          disabled={isPending}
-                        />
+                        <Input {...field} placeholder="****" type="password" disabled={isPending} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

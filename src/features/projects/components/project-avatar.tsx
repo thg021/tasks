@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from 'react';
-import Image from 'next/image';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
@@ -15,12 +14,10 @@ export const ProjectAvatar = ({
   ...rest
 }: ProjectAvatarProps) => {
   return (
-    <Avatar
-      className={cn('border border-neutral-200 size-8 rounded-md', className)}
-    >
+    <Avatar className={cn('size-8 rounded-md border border-neutral-200', className)} {...rest}>
       <AvatarFallback
         className={cn(
-          'text-neutral-500 bg-neutral-200 flex justify-center items-center font-semibold text-xs rounded-md',
+          'flex items-center justify-center rounded-md bg-neutral-200 text-xs font-semibold text-neutral-500',
           fallbackClassName
         )}
       >

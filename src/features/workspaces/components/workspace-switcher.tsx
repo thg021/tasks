@@ -16,15 +16,10 @@ import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { useCreateWorkspaceModal } from '../hooks/use-create-workspaces-modal';
 
 export const WorkspaceSwitcher = () => {
-  const {
-    data: workspaces,
-    isLoading,
-    isError,
-    isFetching
-  } = useGetWorkspaces();
+  const { data: workspaces, isLoading, isFetching } = useGetWorkspaces();
   const workspaceId = useWorkspaceId();
-  const router = useRouter();
   const { open } = useCreateWorkspaceModal();
+  const router = useRouter();
   const onSelect = (value: string) => {
     router.push(`/workspaces/${value}`);
   };
@@ -32,7 +27,7 @@ export const WorkspaceSwitcher = () => {
   if (isLoading) {
     return (
       <div className="flex w-full items-center justify-center">
-        <div className="flex  size-4 items-center justify-center rounded-full border border-neutral-300 bg-neutral-200">
+        <div className="flex size-4 items-center justify-center rounded-full border border-neutral-300 bg-neutral-200">
           <Loader className="size-4 animate-spin" />
         </div>
       </div>
@@ -48,10 +43,7 @@ export const WorkspaceSwitcher = () => {
           className="size-5 cursor-pointer text-neutral-500 transition hover:opacity-70"
         />
       </div>
-      <Select
-        onValueChange={onSelect}
-        value={isFetching ? 'loading' : workspaceId}
-      >
+      <Select onValueChange={onSelect} value={isFetching ? 'loading' : workspaceId}>
         <SelectTrigger className="w-full bg-neutral-200 p-1 font-medium">
           <SelectValue placeholder="Selecione um workspace" />
         </SelectTrigger>

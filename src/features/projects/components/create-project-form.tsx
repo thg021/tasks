@@ -1,24 +1,13 @@
 'use client';
-import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useCreateProject } from '@/features/projects/api/use-create-project';
-import {
-  createProjectSchema,
-  type CreateProjectSchemaProps
-} from '@/features/projects/schemas';
+import { createProjectSchema, type CreateProjectSchemaProps } from '@/features/projects/schemas';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -56,11 +45,9 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
   return (
     <Card className="size-full border-none shadow-none">
       <CardHeader className="flex p-7">
-        <CardTitle className="text-xl font-bold">
-          Criar um novo projeto
-        </CardTitle>
+        <CardTitle className="text-xl font-bold">Criar um novo projeto</CardTitle>
       </CardHeader>
-      <div className=" px-7 ">
+      <div className="px-7">
         <Separator />
       </div>
       <CardContent className="p-7">
@@ -74,7 +61,7 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input {...field} placeholder="Nome" disabled={false} />
+                        <Input {...field} placeholder="Nome" disabled={isPending} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

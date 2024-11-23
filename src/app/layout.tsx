@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { Inter } from 'next/font/google';
-
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 import { auth } from '@/lib/auth';
@@ -22,7 +21,7 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
-      <body className={cn(inter.className, 'antialiased min-h-screen')}>
+      <body className={cn(inter.className, 'min-h-screen antialiased')}>
         <SessionProvider session={session}>
           <QueryProvider>
             <Toaster

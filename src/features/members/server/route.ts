@@ -11,66 +11,86 @@ import { zValidator } from '@hono/zod-validator';
 import { getMembers } from '../services/get-members';
 
 const app = new Hono()
-.get('/', sessionMiddleware, zValidator('query', z.object({ workspaceId: z.string() })), async (c) => {
-  const user = c.get('user');
-  const {workspaceId} = c.req.valid('query');
+  .get(
+    '/',
+    sessionMiddleware,
+    zValidator('query', z.object({ workspaceId: z.string() })),
+    async (c) => {
+      const user = c.get('user');
+      const { workspaceId } = c.req.valid('query');
 
-  if (user.role !== 'ADMIN') {
-        return c.json({ 
-      error: 'Não autorizado: Você não tem permissão para listar os usuários' 
-    }, 401);
-  }
+      if (user.role !== 'ADMIN') {
+        return c.json(
+          {
+            error: 'Não autorizado: Você não tem permissão para listar os usuários'
+          },
+          401
+        );
+      }
 
-  const members = await getMembers({workspaceId});
-  const filteredMembers = map(members, (member) => {
-    return {
-      id: member.id,
-      name: member.user.name || '',
-      email: member.user.email,
-      role: member.user.role,
-      image: member.user.image,
-      emailVerified: member.user.emailVerified
+      const members = await getMembers({ workspaceId });
+      const filteredMembers = map(members, (member) => {
+        return {
+          id: member.id,
+          name: member.user.name || '',
+          email: member.user.email,
+          role: member.user.role,
+          image: member.user.image,
+          emailVerified: member.user.emailVerified
+        };
+      });
+
+      return c.json({
+        data: [...filteredMembers],
+        total: size(filteredMembers)
+      });
+    }
+  )
+
+  .get('/:memberId', sessionMiddleware, async (c) => {
+    const user = c.get('user');
+
+    if (user.role !== 'ADMIN') {
+      return c.json(
+        {
+          error: 'Não autorizado: Você não tem permissão para listar os usuários'
+        },
+        401
+      );
+    }
+
+    const { memberId } = c.req.param();
+    const member = await getMemberById({ userId: memberId });
+
+    return c.json({
+      data: member,
+      total: size(member)
+    });
+  })
+  .post('/', zValidator('form', createWorkspaceSchema), sessionMiddleware, async (c) => {
+    const user = c.get('user');
+    const { name } = c.req.valid('form');
+
+    //  let uploadedImageUrl: string | undefined;
+    const createWorkspacesData: CreateWorkspaceProps = {
+      name,
+      userId: user.id,
+      role: MemberRole.ADMIN
     };
-  });
+    // if (image instanceof File) {
+    //   const file = await storage.createFile(IMAGES_ID, ID.unique(), image);
+    //   const arrayBuffer = await storage.getFilePreview(IMAGES_ID, file.$id);
+    //   uploadedImageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
+    //   createWorkspacesData.imageUrl = uploadedImageUrl;
+    //   createWorkspacesData.storageId = file.$id;
+    // }
 
-  return c.json({
-    data: [...filteredMembers],
-    total: size(filteredMembers)
-  });
-})
+    const workspace = await createWorkspace(createWorkspacesData);
 
-.get('/:memberId', sessionMiddleware, async (c) => {
-  const user = c.get('user');
- 
-  const { memberId } = c.req.param();
-  const member = await getMemberById({ userId: memberId } );
-  
-   return c.json({
-    data: member,
-    total: size(member)
+    return c.json({
+      data: workspace
+    });
   });
-})
-.post('/', zValidator('form', createWorkspaceSchema), sessionMiddleware, async (c) => {
-  const user = c.get('user');
-  const { name, image } = c.req.valid('form');
-
-  let uploadedImageUrl: string | undefined;
-  const createWorkspacesData: CreateWorkspaceProps = { name, userId: user.id, role: MemberRole.ADMIN };
-  // if (image instanceof File) {
-  //   const file = await storage.createFile(IMAGES_ID, ID.unique(), image); 
-  //   const arrayBuffer = await storage.getFilePreview(IMAGES_ID, file.$id);
-  //   uploadedImageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
-  //   createWorkspacesData.imageUrl = uploadedImageUrl;
-  //   createWorkspacesData.storageId = file.$id;
-  // }
-
-  const workspace = await createWorkspace(createWorkspacesData);
-  
-  return c.json({
-    data: workspace
- 
-  });
-});
 // .patch("/:workspaceId", sessionMiddleware, zValidator('form', updateWorkspaceSchema), async (c) => {
 //   const user = c.get("user");
 //   // // const storage = c.get("storage");
@@ -86,8 +106,8 @@ const app = new Hono()
 //   });
 
 //   if (!member) {
-//     return c.json({ 
-//       error: "Não autorizado: Somente administrator pode atualizar o cadastro" 
+//     return c.json({
+//       error: "Não autorizado: Somente administrator pode atualizar o cadastro"
 //     }, 401);
 //   }
 
@@ -117,7 +137,7 @@ const app = new Hono()
 //   // }
 
 //   // if (image instanceof File) {
-//   //   const file = await storage.createFile(IMAGES_ID, ID.unique(), image); 
+//   //   const file = await storage.createFile(IMAGES_ID, ID.unique(), image);
 //   //   const arrayBuffer = await storage.getFilePreview(IMAGES_ID, file.$id);
 //   //   updateData.imageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
 //   //   updateData.storageId = file.$id;
@@ -138,16 +158,16 @@ const app = new Hono()
 //   const { workspaceId } = c.req.param()
 
 //   if (!workspaceId) {
-//     return c.json({ 
-//       error: "Não autorizado: WorkspaceId inválido" 
+//     return c.json({
+//       error: "Não autorizado: WorkspaceId inválido"
 //     }, 401);
 //   }
 
 //   const member = await getMemberById({ userId: user.id, workspaceId });
 
 //   if (!member) {
-//     return c.json({ 
-//       error: "Não autorizado: Somente administrator pode deletar o cadastro" 
+//     return c.json({
+//       error: "Não autorizado: Somente administrator pode deletar o cadastro"
 //     }, 401);
 //   }
 

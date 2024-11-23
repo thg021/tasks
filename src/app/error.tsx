@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { ArrowLeft, AlertCircle, WifiOff } from 'lucide-react';
+import { ArrowLeft, WifiOff } from 'lucide-react';
 
 const ErrorPage = () => {
   return (
@@ -14,9 +14,7 @@ const ErrorPage = () => {
         {/* Error Message */}
         <div className="space-y-4">
           <h1 className="text-4xl font-bold text-slate-800">Error</h1>
-          <p className="text-gray-400">
-            Ops, não foi possível carregar esta página no momento.
-          </p>
+          <p className="text-gray-400">Ops, não foi possível carregar esta página no momento.</p>
         </div>
 
         {/* Actions */}
