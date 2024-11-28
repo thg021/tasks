@@ -5,21 +5,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Project = typeof client.api.projects;
 
-type ResponseType = InferResponseType<Project[':workspaceId']['$post'], 201>;
-type RequestType = InferRequestType<Project[':workspaceId']['$post']>['form'];
+type ResponseType = InferResponseType<Project[':projectId']['$delete'], 204>;
+type RequestType = InferRequestType<Project[':projectId']['$delete']>;
 
-export const useCreateProject = () => {
+export const useDeleteProject = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async ({ name, workspaceId }) => {
-      const response = await client.api.projects[':workspaceId']['$post']({
-        form: {
-          name
-        },
-        param: {
-          workspaceId: workspaceId || ''
-        }
-      });
+    mutationFn: async ({ param }) => {
+      const response = await client.api.projects[':projectId']['$delete']({ param });
 
       if (!response.ok) {
         throw new Error('Erro ao criar workspace!');
@@ -27,13 +20,15 @@ export const useCreateProject = () => {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data: projectId }) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Projeto criado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+
+      toast.success('Projeto deletado com sucesso!');
     },
     onError: (error) => {
       console.error(error);
-      toast.error('Erro ao criar projeto!');
+      toast.error('Erro ao deletar o projeto!');
     }
   });
 

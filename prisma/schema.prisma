@@ -19,10 +19,10 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          Role            @default(USER)
   accounts      Account[]
   sessions      Session[]
   members       Member[]
+  projects      Project[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -74,6 +74,7 @@ model Member {
   id          String    @id @default(cuid())
   created     DateTime  @default(now())
   updated     DateTime  @updatedAt
+  role          Role            @default(USER)
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspaces  Workspace[]
@@ -83,10 +84,11 @@ model Project {
   id        String   @id @default(cuid())
   name      String
   workspaceId  String
+  userId String
   created   DateTime @default(now())
   updated   DateTime @updatedAt
   workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 

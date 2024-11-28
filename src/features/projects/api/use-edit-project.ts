@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import type { InferRequestType, InferResponseType } from 'hono';
 import { toast } from 'sonner';
 import { client } from '@/lib/rpc';
@@ -5,20 +6,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Project = typeof client.api.projects;
 
-type ResponseType = InferResponseType<Project[':workspaceId']['$post'], 201>;
-type RequestType = InferRequestType<Project[':workspaceId']['$post']>['form'];
+type ResponseType = InferResponseType<Project['$patch'], 201>;
+type RequestType = InferRequestType<Project['$patch']>['form'];
 
-export const useCreateProject = () => {
+export const useEditProject = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async ({ name, workspaceId }) => {
-      const response = await client.api.projects[':workspaceId']['$post']({
-        form: {
-          name
-        },
-        param: {
-          workspaceId: workspaceId || ''
-        }
+    mutationFn: async (form) => {
+      const response = await client.api.projects['$patch']({
+        form
       });
 
       if (!response.ok) {
@@ -27,9 +24,11 @@ export const useCreateProject = () => {
 
       return await response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Projeto criado com sucesso!');
+    onSuccess: ({ data }) => {
+      queryClient.invalidateQueries({ queryKey: ['projects', data.workspaceId] });
+      queryClient.invalidateQueries({ queryKey: ['project', data.workspaceId, data.id] });
+      router.refresh();
+      toast.success('Projeto atualizado com sucesso!');
     },
     onError: (error) => {
       console.error(error);

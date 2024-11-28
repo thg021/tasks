@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -10,11 +11,8 @@ type WorkspaceIdSettingPageProps = {
     projectId: string;
   };
 };
-export default async function WorkspaceIdSettingPage({
-  params
-}: WorkspaceIdSettingPageProps) {
+export default async function WorkspaceIdSettingPage({ params }: WorkspaceIdSettingPageProps) {
   const user = await getUserCurrentSession();
-
   const project = await getProject({
     projectId: params.projectId,
     workspaceId: params.workspaceId,
@@ -29,9 +27,11 @@ export default async function WorkspaceIdSettingPage({
     <div className="flex flex-col gap-y-4">
       <div className="flex w-full items-center justify-between">
         <h1>{project.name}</h1>
-        <Button>
-          <PencilIcon />
-          <span>Editar projeto</span>
+        <Button asChild>
+          <Link href={`/workspaces/${params.workspaceId}/projects/${params.projectId}/settings`}>
+            <PencilIcon />
+            <span>Editar projeto</span>
+          </Link>
         </Button>
       </div>
       <Separator />

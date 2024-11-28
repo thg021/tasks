@@ -5,19 +5,17 @@ import { getWorkspaceById } from '@/features/workspaces/services';
 
 type WorkspaceIdSettingPageProps = {
   params: {
-    workspacesId: string;
+    workspaceId: string;
   };
 };
-export default async function WorkspaceIdSettingPage({
-  params
-}: WorkspaceIdSettingPageProps) {
+export default async function WorkspaceIdSettingPage({ params }: WorkspaceIdSettingPageProps) {
   const user = await getUserCurrentSession();
   const workspace = await getWorkspaceById({
     userId: user?.id,
-    workspaceId: params.workspacesId
+    workspaceId: params.workspaceId
   });
 
-  if (!workspace) redirect(`/workspaces/${params.workspacesId}`);
+  if (!workspace) redirect(`/workspaces/${params.workspaceId}`);
 
   return (
     <div className="flex flex-col">

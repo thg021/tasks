@@ -6,6 +6,7 @@ import { MemberRole } from '@/features/members/types';
 import { createWorkspaceSchema } from '@/features/workspaces/schemas';
 import { createWorkspace } from '@/features/workspaces/services';
 import type { CreateWorkspaceProps } from '@/features/workspaces/types';
+import { isWorkspaceAdmin } from '@/lib/is-workspace-admin';
 import { sessionMiddleware } from '@/lib/session-middleware';
 import { zValidator } from '@hono/zod-validator';
 import { getMembers } from '../services/get-members';
@@ -14,19 +15,10 @@ const app = new Hono()
   .get(
     '/',
     sessionMiddleware,
+    isWorkspaceAdmin,
     zValidator('query', z.object({ workspaceId: z.string() })),
     async (c) => {
-      const user = c.get('user');
       const { workspaceId } = c.req.valid('query');
-
-      if (user.role !== 'ADMIN') {
-        return c.json(
-          {
-            error: 'Não autorizado: Você não tem permissão para listar os usuários'
-          },
-          401
-        );
-      }
 
       const members = await getMembers({ workspaceId });
       const filteredMembers = map(members, (member) => {
@@ -34,7 +26,7 @@ const app = new Hono()
           id: member.id,
           name: member.user.name || '',
           email: member.user.email,
-          role: member.user.role,
+          role: member.role,
           image: member.user.image,
           emailVerified: member.user.emailVerified
         };
@@ -47,18 +39,7 @@ const app = new Hono()
     }
   )
 
-  .get('/:memberId', sessionMiddleware, async (c) => {
-    const user = c.get('user');
-
-    if (user.role !== 'ADMIN') {
-      return c.json(
-        {
-          error: 'Não autorizado: Você não tem permissão para listar os usuários'
-        },
-        401
-      );
-    }
-
+  .get('/:memberId', sessionMiddleware, isWorkspaceAdmin, async (c) => {
     const { memberId } = c.req.param();
     const member = await getMemberById({ userId: memberId });
 

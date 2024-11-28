@@ -22,7 +22,6 @@ app.use('/api/auth/*', authHandler());
 app.use('/api/*', verifyAuth());
 
 app.onError((err, c) => {
-  console.error(err);
   if (err instanceof HTTPException) {
     // Get the custom response
     return err.getResponse();

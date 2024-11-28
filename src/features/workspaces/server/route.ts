@@ -10,6 +10,7 @@ import {
 } from '@/features/workspaces/services';
 import type { CreateWorkspaceProps } from '@/features/workspaces/types';
 import { db } from '@/lib/db.prisma';
+import { isWorkspaceAdmin } from '@/lib/is-workspace-admin';
 import { sessionMiddleware } from '@/lib/session-middleware';
 import { zValidator } from '@hono/zod-validator';
 import type { Prisma } from '@prisma/client';
@@ -69,32 +70,13 @@ const app = new Hono()
   .patch(
     '/:workspaceId',
     sessionMiddleware,
+    isWorkspaceAdmin,
     zValidator('form', updateWorkspaceSchema),
     async (c) => {
       const user = c.get('user');
-      // // const storage = c.get("storage");
+
       const { workspaceId } = c.req.param();
       const { name } = c.req.valid('form');
-
-      const member = await db.member.findFirst({
-        where: {
-          userId: user.id,
-          workspaces: {
-            some: {
-              id: workspaceId
-            }
-          }
-        }
-      });
-
-      if (!member) {
-        return c.json(
-          {
-            error: 'Não autorizado: Somente administrator pode atualizar o cadastro'
-          },
-          401
-        );
-      }
 
       const workspace = await getWorkspaceById({ userId: user.id, workspaceId });
       if (!workspace) {
@@ -141,7 +123,7 @@ const app = new Hono()
       });
     }
   )
-  .delete('/:workspaceId', sessionMiddleware, async (c) => {
+  .delete('/:workspaceId', sessionMiddleware, isWorkspaceAdmin, async (c) => {
     const user = c.get('user');
     const { workspaceId } = c.req.param();
 
@@ -149,15 +131,6 @@ const app = new Hono()
       return c.json(
         {
           error: 'Não autorizado: WorkspaceId inválido'
-        },
-        401
-      );
-    }
-
-    if (user.role !== 'ADMIN') {
-      return c.json(
-        {
-          error: 'Não autorizado: Somente administrator pode deletar o cadastro'
         },
         401
       );

@@ -2,11 +2,12 @@ import 'server-only';
 import { db } from '@/lib/db.prisma';
 
 type GetWorkspaceByIdRequest = {
-  userId?: string
-  workspaceId: string
-}
+  userId?: string;
+  workspaceId: string;
+};
 
-export const getWorkspaceById = async ({ userId, workspaceId}: GetWorkspaceByIdRequest) => await db.workspace.findFirst({
+export const getWorkspaceById = async ({ userId, workspaceId }: GetWorkspaceByIdRequest) =>
+  await db.workspace.findFirst({
     where: {
       id: workspaceId,
       members: {
@@ -14,5 +15,8 @@ export const getWorkspaceById = async ({ userId, workspaceId}: GetWorkspaceByIdR
           userId
         }
       }
+    },
+    include: {
+      projects: true
     }
   });
