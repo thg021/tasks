@@ -51,14 +51,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
       workspaceId,
       projectId
     };
-    EditProject(finalValues, {
-      onSuccess: () => {
-        //form.reset();
-      },
-      onError: (error) => {
-        console.error(error);
-      }
-    });
+    EditProject(finalValues);
   };
 
   const handleDelete = async () => {
@@ -68,8 +61,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
       { param: { projectId: projectId || '' } },
       {
         onSuccess: () => {
-          router.push(`/${workspaceId}`);
-          window.location.href = '/';
+          router.push(`/workspaces/${workspaceId}`);
         },
         onError: (error) => {
           console.error(error);
