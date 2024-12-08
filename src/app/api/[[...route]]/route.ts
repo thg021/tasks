@@ -4,6 +4,7 @@ import { handle } from 'hono/vercel';
 import authRoutes from '@/features/auth/server/route';
 import membersRoutes from '@/features/members/server/route';
 import projectsRoutes from '@/features/projects/server/route';
+import tasksRoutes from '@/features/tasks/server/route';
 import workspacesRoutes from '@/features/workspaces/server/route';
 import { authHandler, verifyAuth } from '@hono/auth-js';
 
@@ -15,10 +16,10 @@ const routes = app
   .route('/authenticated', authRoutes)
   .route('/workspace', workspacesRoutes)
   .route('/members', membersRoutes)
-  .route('/projects', projectsRoutes);
+  .route('/projects', projectsRoutes)
+  .route('/tasks', tasksRoutes);
 
 app.use('/api/auth/*', authHandler());
-
 app.use('/api/*', verifyAuth());
 
 app.onError((err, c) => {
@@ -26,7 +27,6 @@ app.onError((err, c) => {
     // Get the custom response
     return err.getResponse();
   }
-
   return c.text('Custom Error Message', 500);
 });
 

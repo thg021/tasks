@@ -1,7 +1,9 @@
 import { client } from '@/lib/rpc';
 import { useQuery } from '@tanstack/react-query';
 
-export const useGetProjects = ({ workspaceId }: { workspaceId: string }) => {
+type GetProjectsProps = { workspaceId: string };
+
+export const useGetProjects = ({ workspaceId }: GetProjectsProps) => {
   return useQuery({
     queryKey: ['projects', workspaceId],
     queryFn: async () => {
@@ -13,12 +15,16 @@ export const useGetProjects = ({ workspaceId }: { workspaceId: string }) => {
 
       if (!response.ok) {
         return {
-          data: [],
-          total: 0
+          data: {
+            project: [],
+            workspace: [],
+            member: []
+          }
         };
       }
 
       const data = await response.json();
+
       return data;
     }
   });

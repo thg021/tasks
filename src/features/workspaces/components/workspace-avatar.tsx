@@ -8,34 +8,17 @@ type WorkspaceAvatarProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
 };
 
-export const WorkspaceAvatar = ({
-  name,
-  image,
-  className,
-  ...rest
-}: WorkspaceAvatarProps) => {
+export const WorkspaceAvatar = ({ name, image, className, ...rest }: WorkspaceAvatarProps) => {
   if (image) {
     return (
-      <div
-        className={cn(
-          'size-10 relative rounded-md overflow-hidden ',
-          className
-        )}
-        {...rest}
-      >
-        <Image
-          src={image}
-          alt={name}
-          width={32}
-          height={32}
-          className="object-center"
-        />
+      <div className={cn('relative size-10 overflow-hidden rounded-md', className)} {...rest}>
+        <Image src={image} alt={name} width={32} height={32} className="object-center" />
       </div>
     );
   }
   return (
     <Avatar className={cn('size-8 rounded-md', className)}>
-      <AvatarFallback className="rounded-md bg-blue-600 text-xs font-semibold text-white">
+      <AvatarFallback className="rounded-md bg-slate-800 text-xs font-semibold text-white">
         {name.substring(0, 2)}
       </AvatarFallback>
     </Avatar>

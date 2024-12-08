@@ -2,7 +2,6 @@
 import { RiAddCircleFill } from 'react-icons/ri';
 import { useRouter } from 'next/navigation';
 import { map, size } from 'lodash';
-import { Loader } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -14,6 +13,7 @@ import { useGetWorkspaces } from '@/features/workspaces/api/use-get-workspaces';
 import { WorkspaceAvatar } from '@/features/workspaces/components/workspace-avatar';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { useCreateWorkspaceModal } from '../hooks/use-create-workspaces-modal';
+import { WorkspaceSwitcherLoading } from './workspace-switcher-loading';
 
 export const WorkspaceSwitcher = () => {
   const { data: workspaces, isLoading, isFetching } = useGetWorkspaces();
@@ -24,15 +24,7 @@ export const WorkspaceSwitcher = () => {
     router.push(`/workspaces/${value}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex w-full items-center justify-center">
-        <div className="flex size-4 items-center justify-center rounded-full border border-neutral-300 bg-neutral-200">
-          <Loader className="size-4 animate-spin" />
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <WorkspaceSwitcherLoading />;
 
   return (
     <div className="flex w-full flex-col gap-y-4">

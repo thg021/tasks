@@ -12,6 +12,15 @@ enum Role {
   USER
 }
 
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  QA
+  IN_REVIEW
+  DONE
+}
+
 model User {
   id            String          @id @default(cuid())
   name          String?
@@ -67,7 +76,8 @@ model Workspace {
   updated   DateTime @updatedAt
 
   members   Member[]
-  projects  Project[]
+  projects  Project[]  
+  tasks       Task[]
 }
 
 model Member {
@@ -78,6 +88,7 @@ model Member {
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspaces  Workspace[]
+
 }
 
 model Project {
@@ -87,18 +98,23 @@ model Project {
   userId String
   created   DateTime @default(now())
   updated   DateTime @updatedAt
+  tasks       Task[]
   workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-
-// model MemberWorkspace {
-//   memberId    String
-//   member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
-//   workspaceId String
-//   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-//   @@id([memberId, workspaceId]) // Define a chave composta
-//   @@index([memberId])           // Índice adicional para memberId
-//   @@index([workspaceId])        // Índice adicional para workspaceId
-// }
+model Task {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  dueDate     DateTime
+  position    Int
+  status      TaskStatus
+  project     Project   @relation(fields: [projectId], references: [id])
+  projectId   String
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  assignedId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

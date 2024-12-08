@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { getUserCurrentSession } from '@/features/auth/actions/get-user-current-session';
 import { getProject } from '@/features/projects/actions/get-project';
+import { TaskViewSwitcher } from '@/features/tasks/components/task-view-switcher';
 
 type WorkspaceIdSettingPageProps = {
   params: {
@@ -35,6 +36,7 @@ export default async function WorkspaceIdSettingPage({ params }: WorkspaceIdSett
         </Button>
       </div>
       <Separator />
+      <TaskViewSwitcher />
     </div>
   );
 }

@@ -5,12 +5,14 @@ import { cn } from '@/lib/utils';
 type ProjectAvatarProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
   fallbackClassName?: string;
+  isActive: boolean;
 };
 
 export const ProjectAvatar = ({
   name,
   fallbackClassName,
   className,
+  isActive,
   ...rest
 }: ProjectAvatarProps) => {
   return (
@@ -18,7 +20,8 @@ export const ProjectAvatar = ({
       <AvatarFallback
         className={cn(
           'flex items-center justify-center rounded-md bg-neutral-200 text-xs font-semibold text-neutral-500',
-          fallbackClassName
+          fallbackClassName,
+          isActive && 'bg-slate-900 text-white'
         )}
       >
         {name.charAt(0).toUpperCase()}

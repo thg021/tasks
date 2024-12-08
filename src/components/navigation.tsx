@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  GoCheckCircle,
-  GoCheckCircleFill,
-  GoHome,
-  GoHomeFill
-} from 'react-icons/go';
+import { GoCheckCircle, GoCheckCircleFill, GoHome, GoHomeFill } from 'react-icons/go';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { map } from 'lodash';
@@ -55,14 +50,14 @@ export const Navigation = () => {
             <Link href={fullHref}>
               <div
                 className={cn(
-                  'flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-primary transition text-neutral-500 hover:text-neutral-900',
-                  isActive &&
-                    'bg-white shadow-sm hover:opacity-100 text-primary'
+                  'group flex items-center gap-2.5 rounded-md p-2.5 font-medium text-slate-500 transition hover:text-primary hover:text-slate-900',
+                  isActive && 'bg-neutral-200 text-primary shadow-sm hover:opacity-100'
                 )}
               >
                 <Icon
                   className={cn(
-                    'size-5 text-neutral-500 hover:text-neutral-900'
+                    'size-5 text-slate-500 group-hover:text-slate-900',
+                    isActive && 'text-slate-900'
                   )}
                 />
                 <span className="text-sm">{label}</span>

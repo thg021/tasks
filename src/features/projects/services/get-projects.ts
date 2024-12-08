@@ -2,11 +2,23 @@ import 'server-only';
 import { db } from '@/lib/db.prisma';
 
 type GetProjects = {
-  workspaceId: string
-}
+  workspaceId: string;
+};
 
-export const getProjects = async ({ workspaceId }: GetProjects) => await db.project.findMany({
-  where: {
-    workspaceId 
-  }
-});
+export const getProjects = async ({ workspaceId }: GetProjects) =>
+  await db.project.findMany({
+    where: {
+      workspaceId
+    },
+    include: {
+      workspace: {
+        include: {
+          members: {
+            include: {
+              user: true
+            }
+          }
+        }
+      }
+    }
+  });

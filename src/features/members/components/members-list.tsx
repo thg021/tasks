@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { useGetMembers } from '@/features/members/api/use-get-members';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { MemberAvatar } from './member-avatar';
+import MembersListLoading from './members-list-loading';
 
 export const MembersList = () => {
   const workspaceId = useWorkspaceId();
@@ -21,19 +22,15 @@ export const MembersList = () => {
       <CardHeader className="flex p-7">
         <CardTitle className="text-xl font-bold">Equipe</CardTitle>
       </CardHeader>
-      <div className=" px-7 ">
+      <div className="px-7">
         <Separator />
       </div>
       <CardContent className="flex flex-col space-y-4 py-4">
-        {isLoading && <p>Carregando...</p>}
+        {isLoading && <MembersListLoading />}
         {members?.data.map((member, index) => (
           <>
             <div key={member.id} className="flex items-center gap-2">
-              <MemberAvatar
-                name={member.name}
-                className="size-8"
-                fallbackClassName="text-lg"
-              />
+              <MemberAvatar name={member.name} className="size-8" fallbackClassName="text-lg" />
 
               <div className="flex flex-col">
                 <p className="text-sm font-medium">{member.name}</p>
@@ -42,7 +39,7 @@ export const MembersList = () => {
               <div className="ml-auto flex items-center gap-2">
                 {member.role === 'ADMIN' && (
                   <span className="ml-auto rounded-md bg-emerald-300 px-2 py-1 text-xs text-emerald-900">
-                    Adiministrador
+                    Administrador
                   </span>
                 )}
                 <DropdownMenu>
@@ -52,25 +49,13 @@ export const MembersList = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent side="bottom" align="end">
-                    <DropdownMenuItem
-                      className="font-medium"
-                      onClick={() => {}}
-                      disabled={false}
-                    >
+                    <DropdownMenuItem className="font-medium" onClick={() => {}} disabled={false}>
                       Adm
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="font-medium"
-                      onClick={() => {}}
-                      disabled={false}
-                    >
+                    <DropdownMenuItem className="font-medium" onClick={() => {}} disabled={false}>
                       Membro
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="font-medium"
-                      onClick={() => {}}
-                      disabled={false}
-                    >
+                    <DropdownMenuItem className="font-medium" onClick={() => {}} disabled={false}>
                       Editar
                     </DropdownMenuItem>
                     <DropdownMenuItem

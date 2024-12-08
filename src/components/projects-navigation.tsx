@@ -5,15 +5,19 @@ import { usePathname } from 'next/navigation';
 import { map } from 'lodash';
 import { useGetProjects } from '@/features/projects/api/use-get-projects';
 import { ProjectAvatar } from '@/features/projects/components/project-avatar';
+import { ProjectNavigationLoading } from '@/features/projects/components/project-navigation-loading';
 import { useCreateProjectModal } from '@/features/projects/hooks/use-create-project-modal';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { cn } from '@/lib/utils';
 
-export const Projects = () => {
+export const ProjectsNavigation = () => {
   const { open } = useCreateProjectModal();
   const workspaceId = useWorkspaceId();
   const pathname = usePathname();
   const { data: projects, isLoading } = useGetProjects({ workspaceId });
+
+  if (isLoading) return <ProjectNavigationLoading />;
+
   return (
     <div className="flex w-full flex-col gap-y-4">
       <div className="flex items-center justify-between">
@@ -23,22 +27,20 @@ export const Projects = () => {
           className="size-5 cursor-pointer text-neutral-500 transition hover:opacity-70"
         />
       </div>
-      {isLoading && (
-        <p className="text-xs text-muted-foreground">Carregando...</p>
-      )}
+      {isLoading && <p className="text-xs text-muted-foreground">Carregando...</p>}
       <div className="flex flex-col gap-y-1">
-        {map(projects?.data, (project) => {
+        {map(projects?.data.project, (project) => {
           const href = `/workspaces/${workspaceId}/projects/${project.id}`;
           const isActive = pathname === href;
           return (
             <Link href={href} key={project.id}>
               <div
                 className={cn(
-                  'flex items-center gap-x-3 cursor-pointer rounded-md p-2 hover:bg-neutral-200 transition',
+                  'flex cursor-pointer items-center gap-x-3 rounded-md p-2 transition hover:bg-neutral-200',
                   isActive && 'bg-neutral-200'
                 )}
               >
-                <ProjectAvatar name={project.name} className="size-6" />
+                <ProjectAvatar name={project.name} className="size-6" isActive />
                 <span className="truncate text-sm">{project.name}</span>
               </div>
             </Link>

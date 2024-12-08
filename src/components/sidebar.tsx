@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navigation } from '@/components/navigation';
-import { Projects } from '@/components/Projects';
+import { ProjectsNavigation } from '@/components/projects-navigation';
 import { Separator } from '@/components/ui/separator';
 import { WorkspaceSwitcher } from '@/features/workspaces/components/workspace-switcher';
 
@@ -16,7 +16,7 @@ export const Sidebar = () => {
       <Separator className="my-6" />
       <Navigation />
       <Separator className="my-6" />
-      <Projects />
+      <ProjectsNavigation />
     </aside>
   );
 };
