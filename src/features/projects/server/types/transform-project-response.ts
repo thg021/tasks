@@ -19,10 +19,8 @@ type Member = {
   role: Role; // Ajuste os roles conforme necessário
 };
 
-export type GetProjectsResponse = {
-  data: {
-    project: Project[];
-    workspace: Workspace[];
-    member: Member[];
-  };
+export type TransformProjectResponse = {
+  project: Project[];
+  workspace: Workspace[];
+  member: Member[];
 };

@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 type DatePickerProps = {
   value: Date | undefined;
-  onChange: (date: Date) => void;
+  onChange: (date: Date | undefined) => void;
   className?: string;
   placeholder?: string;
 };
@@ -33,10 +33,10 @@ export const DatePicker = ({
           )}
         >
           <CalendarIcon className="mr-2 size-4" />
-          {value ? format(value, 'PPP') : <span>{placeholder}</span>}
+          {value ? format(value, 'dd/MM/yyyy') : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
           selected={value}

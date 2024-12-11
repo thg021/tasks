@@ -1,17 +1,19 @@
 import type { InferRequestType, InferResponseType } from 'hono';
 import { toast } from 'sonner';
 import { client } from '@/lib/rpc';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-type Task = typeof client.api.tasks;
+type Task = typeof client.api.task;
 
 type ResponseType = InferResponseType<Task['$post'], 201>;
 type RequestType = InferRequestType<Task['$post']>['form'];
 
 export const useCreateTask = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (form) => {
-      const response = await client.api.tasks['$post']({
+      const response = await client.api.task['$post']({
         form
       });
 
@@ -21,8 +23,9 @@ export const useCreateTask = () => {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       toast.success('Tarefa criada com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['tasks', data.workspaceId] });
     },
     onError: (error) => {
       console.error(error);

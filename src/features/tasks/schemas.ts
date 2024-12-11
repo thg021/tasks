@@ -12,4 +12,4 @@ export const createTaskSchema = z.object({
 });
 
 // Type inference
-export type CreateTaskSchema = z.infer<typeof createTaskSchema>;
+export type CreateTaskSchemaProps = z.infer<typeof createTaskSchema>;

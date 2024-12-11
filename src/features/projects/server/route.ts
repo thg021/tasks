@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { find, map, pick, flatMap, get } from 'lodash';
+import { find } from 'lodash';
 import { z } from 'zod';
 import { createProjectSchema, updateProjectSchema } from '@/features/projects/schemas';
 import { createProject } from '@/features/projects/services/create-project';
@@ -11,7 +11,6 @@ import { zValidator } from '@hono/zod-validator';
 import { deleteProject } from '../services/delete-project';
 import { getProject } from '../services/get-project';
 import { updateProject } from '../services/update-project';
-import type { GetProjectsResponse } from './types/get-projects.types';
 
 const app = new Hono()
   .get(
@@ -21,40 +20,8 @@ const app = new Hono()
     zValidator('query', z.object({ workspaceId: z.string() })),
     async (c) => {
       const { workspaceId } = c.req.valid('query');
-      const response: GetProjectsResponse = {
-        data: {
-          project: [],
-          workspace: [],
-          member: []
-        }
-      };
-      const listAllProjects = await getProjects({ workspaceId });
-      const workspace = map(listAllProjects, (item) =>
-        pick(item.workspace, ['id', 'name', 'imageUrl'])
-      );
-
-      const member = flatMap(listAllProjects, (item) =>
-        get(item, 'workspace.members', []).map((member) => ({
-          id: member.id,
-          userId: member.userId,
-          name: member.user.name || '',
-          email: member.user.email,
-          role: member.role
-        }))
-      );
-
-      const project = map(listAllProjects, (item) => ({
-        id: item.id,
-        name: item.name
-      }));
-
-      response.data = {
-        project,
-        workspace,
-        member
-      };
-
-      return c.json(response);
+      const projects = await getProjects({ workspaceId });
+      return c.json(projects);
     }
   )
   .get(

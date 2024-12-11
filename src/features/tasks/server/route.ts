@@ -19,7 +19,7 @@ const app = new Hono()
       'query',
       z.object({
         workspaceId: z.string(),
-        projectId: z.string(),
+        projectId: z.string().optional(),
         assignedId: z.string().optional(),
         status: z.nativeEnum(TaskStatus).optional(),
         search: z.string().optional(),
@@ -42,6 +42,7 @@ const app = new Hono()
       }
 
       const tasks = await getTasks({
+        workspaceId,
         projectId,
         assignedId,
         status,

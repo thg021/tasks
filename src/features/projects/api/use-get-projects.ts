@@ -1,3 +1,4 @@
+import { transformProjectsData } from '@/features/projects/utils/transform-projects-data';
 import { client } from '@/lib/rpc';
 import { useQuery } from '@tanstack/react-query';
 
@@ -24,8 +25,8 @@ export const useGetProjects = ({ workspaceId }: GetProjectsProps) => {
       }
 
       const data = await response.json();
-
-      return data;
+      const transformedData = transformProjectsData(data);
+      return { data: { ...transformedData } };
     }
   });
 };

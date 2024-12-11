@@ -4,13 +4,20 @@ export const useCreateTaskModal = () => {
     'create-task',
     parseAsBoolean.withDefault(false).withOptions({ clearOnDefault: true })
   );
+  const [isMaximize, setIsMaximize] = useQueryState(
+    'maximize',
+    parseAsBoolean.withDefault(false).withOptions({ clearOnDefault: true })
+  );
   const open = () => setIsOpen(true);
   const close = () => setIsOpen(false);
+  const toggleMaximize = () => setIsMaximize(!isMaximize);
 
   return {
     isOpen,
     open,
     close,
-    setIsOpen
+    setIsOpen,
+    isMaximize,
+    toggleMaximize
   };
 };

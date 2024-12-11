@@ -4,7 +4,7 @@ import { handle } from 'hono/vercel';
 import authRoutes from '@/features/auth/server/route';
 import membersRoutes from '@/features/members/server/route';
 import projectsRoutes from '@/features/projects/server/route';
-import tasksRoutes from '@/features/tasks/server/route';
+import taskRoutes from '@/features/tasks/server/route';
 import workspacesRoutes from '@/features/workspaces/server/route';
 import { authHandler, verifyAuth } from '@hono/auth-js';
 
@@ -17,7 +17,7 @@ const routes = app
   .route('/workspace', workspacesRoutes)
   .route('/members', membersRoutes)
   .route('/projects', projectsRoutes)
-  .route('/tasks', tasksRoutes);
+  .route('/task', taskRoutes);
 
 app.use('/api/auth/*', authHandler());
 app.use('/api/*', verifyAuth());

@@ -2,7 +2,8 @@ import { db } from '@/lib/db.prisma';
 import type { Prisma, TaskStatus } from '@prisma/client';
 
 interface TaskFilters {
-  projectId: string;
+  workspaceId?: string;
+  projectId?: string;
   assignedId?: string;
   status?: TaskStatus;
   search?: string;
@@ -15,6 +16,10 @@ export const getTasks = async (filters: TaskFilters) => {
   };
 
   // Adiciona filtros apenas se estiverem definidos
+  if (filters.workspaceId) {
+    where.workspaceId = filters.workspaceId;
+  }
+
   if (filters.projectId) {
     where.projectId = filters.projectId;
   }
