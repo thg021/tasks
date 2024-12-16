@@ -29,21 +29,21 @@ export const WorkspaceSwitcher = () => {
   return (
     <div className="flex w-full flex-col gap-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs uppercase text-neutral-500">Workspaces </p>
+        <p className="text-xs uppercase text-neutral-500 dark:text-neutral-100">Workspaces </p>
         <RiAddCircleFill
           onClick={open}
-          className="size-5 cursor-pointer text-neutral-500 transition hover:opacity-70"
+          className="size-5 cursor-pointer text-neutral-500 transition hover:opacity-70 dark:text-neutral-100"
         />
       </div>
       <Select onValueChange={onSelect} value={isFetching ? 'loading' : workspaceId}>
-        <SelectTrigger className="w-full bg-neutral-200 p-1 font-medium">
+        <SelectTrigger className="w-full bg-neutral-200 p-1 font-medium dark:bg-neutral-800">
           <SelectValue placeholder="Selecione um workspace" />
         </SelectTrigger>
         {isFetching && (
           <SelectContent>
             <SelectItem value="loading">
               <div className="flex items-center justify-start gap-1 font-medium">
-                <div className="size-4 animate-pulse rounded-full bg-neutral-300" />
+                <div className="size-4 animate-pulse rounded-full bg-neutral-300 dark:bg-neutral-800" />
                 <span className="truncate">Carregando...</span>
               </div>
             </SelectItem>
@@ -53,11 +53,7 @@ export const WorkspaceSwitcher = () => {
           {map(workspaces?.data, (workspace) => (
             <SelectItem key={workspace.id} value={workspace.id}>
               <div className="flex items-center justify-start gap-1 font-medium">
-                <WorkspaceAvatar
-                  image={workspace.imageUrl || ''}
-                  name={workspace.name}
-                  className="border-solid-red border"
-                />
+                <WorkspaceAvatar image={workspace.imageUrl || ''} name={workspace.name} />
                 <span className="truncate">{workspace.name}</span>
               </div>
             </SelectItem>

@@ -1,5 +1,6 @@
 'use client';
 import { PlusIcon } from 'lucide-react';
+import { useQueryState } from 'nuqs';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,14 +8,30 @@ import { useParamProjectId } from '@/features/projects/hooks/use-param-project-i
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { useGetTasks } from '../api/use-get-tasks';
 import { useCreateTaskModal } from '../hooks/use-create-task-modal';
+import { useTasksFilters } from '../hooks/use-tasks-filters';
+import { columns } from './columns';
+import { DataFilters } from './data-filters';
+import { DataTable } from './data-table';
 
 export const TaskViewSwitcher = () => {
+  const [view, setView] = useQueryState('task-view', {
+    defaultValue: 'table'
+  });
+  const [{ status, projectId, dueDate, assignedId }] = useTasksFilters();
+
   const { open } = useCreateTaskModal();
   const workspaceId = useWorkspaceId();
-  const projectId = useParamProjectId();
-  const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({ workspaceId, projectId });
+  const projectIdParam = useParamProjectId();
+  const { data: tasks } = useGetTasks({
+    workspaceId,
+    projectId: projectIdParam ?? projectId,
+    status: status ?? undefined,
+    assignedId: assignedId ?? undefined,
+    dueDate: dueDate ?? undefined
+  });
+
   return (
-    <Tabs className="w-full flex-1 rounded-lg border">
+    <Tabs defaultValue={view} onValueChange={setView} className="w-full flex-1 rounded-lg border">
       <div className="flex h-full flex-col overflow-auto p-4">
         <div className="flex flex-col items-center justify-between gap-y-2 lg:flex-row">
           <TabsList className="w-full lg:w-auto">
@@ -34,11 +51,11 @@ export const TaskViewSwitcher = () => {
           </Button>
         </div>
         <Separator className="my-4" />
-        {/* TODO: filtros */}
+        <DataFilters />
         <Separator className="my-4" />
         <>
           <TabsContent className="mt-0" value="table">
-            {!isLoadingTasks && <pre>{JSON.stringify(tasks?.data, null, 2)}</pre>}
+            <DataTable columns={columns} data={tasks?.data || []} />
           </TabsContent>
           <TabsContent className="mt-0" value="kanban">
             kanban

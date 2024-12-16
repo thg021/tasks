@@ -50,14 +50,15 @@ export const Navigation = () => {
             <Link href={fullHref}>
               <div
                 className={cn(
-                  'group flex items-center gap-2.5 rounded-md p-2.5 font-medium text-slate-500 transition hover:text-primary hover:text-slate-900',
-                  isActive && 'bg-neutral-200 text-primary shadow-sm hover:opacity-100'
+                  'group flex items-center gap-2.5 rounded-md p-2.5 font-medium text-neutral-500 transition hover:text-neutral-900 hover:text-primary dark:text-neutral-200 dark:hover:text-neutral-500',
+                  isActive &&
+                    'bg-neutral-200 text-primary shadow-sm hover:opacity-100 dark:bg-neutral-800'
                 )}
               >
                 <Icon
                   className={cn(
-                    'size-5 text-slate-500 group-hover:text-slate-900',
-                    isActive && 'text-slate-900'
+                    'size-5 text-neutral-500 group-hover:text-neutral-900 dark:text-neutral-200 dark:group-hover:text-neutral-500',
+                    isActive && 'text-neutral-900'
                   )}
                 />
                 <span className="text-sm">{label}</span>

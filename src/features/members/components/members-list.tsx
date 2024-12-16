@@ -18,7 +18,7 @@ export const MembersList = () => {
   const workspaceId = useWorkspaceId();
   const { data: members, isLoading } = useGetMembers(workspaceId);
   return (
-    <Card className="size-full border border-zinc-300 shadow-none">
+    <Card className="size-full border-neutral-300 shadow-none dark:border-neutral-800">
       <CardHeader className="flex p-7">
         <CardTitle className="text-xl font-bold">Equipe</CardTitle>
       </CardHeader>

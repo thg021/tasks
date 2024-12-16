@@ -111,7 +111,7 @@ export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceForm
   return (
     <div className="flex flex-col space-y-4">
       <DeleteDialog />
-      <Card className="size-full border border-zinc-300 shadow-none">
+      <Card className="size-full border-neutral-300 shadow-none dark:border-neutral-800">
         <CardHeader className="flex p-7">
           <CardTitle className="text-xl font-bold">{initialValues.name}</CardTitle>
         </CardHeader>
@@ -233,7 +233,7 @@ export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceForm
           </Form>
         </CardContent>
       </Card>
-      <Card className="size-full border border-zinc-300 shadow-none">
+      <Card className="size-full border-neutral-300 shadow-none dark:border-neutral-800">
         <CardHeader className="flex px-7">
           <CardTitle className="text-xl font-bold">Danger zone</CardTitle>
         </CardHeader>

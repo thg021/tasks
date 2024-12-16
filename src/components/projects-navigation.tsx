@@ -21,10 +21,10 @@ export const ProjectsNavigation = () => {
   return (
     <div className="flex w-full flex-col gap-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs uppercase text-neutral-500">Project </p>
+        <p className="text-xs uppercase text-neutral-500 dark:text-neutral-100">Project </p>
         <RiAddCircleFill
           onClick={open}
-          className="size-5 cursor-pointer text-neutral-500 transition hover:opacity-70"
+          className="size-5 cursor-pointer text-neutral-500 transition hover:opacity-70 dark:text-neutral-100"
         />
       </div>
       {isLoading && <p className="text-xs text-muted-foreground">Carregando...</p>}
@@ -36,8 +36,8 @@ export const ProjectsNavigation = () => {
             <Link href={href} key={project.id}>
               <div
                 className={cn(
-                  'flex cursor-pointer items-center gap-x-3 rounded-md p-2 transition hover:bg-neutral-200',
-                  isActive && 'bg-neutral-200'
+                  'flex cursor-pointer items-center gap-x-3 rounded-md p-2 transition hover:bg-neutral-200 dark:text-neutral-200 dark:hover:text-neutral-500',
+                  isActive && 'bg-neutral-200 dark:bg-neutral-800'
                 )}
               >
                 <ProjectAvatar name={project.name} className="size-6" isActive />
