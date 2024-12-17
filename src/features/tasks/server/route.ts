@@ -8,6 +8,8 @@ import { sessionMiddleware } from '@/lib/session-middleware';
 import { zValidator } from '@hono/zod-validator';
 import { createTaskSchema } from '../schemas';
 import { createTask } from '../services/create-task';
+import { deleteTask } from '../services/delete-task';
+import { getTask } from '../services/get-task';
 import { getTasks } from '../services/get-tasks';
 import { TaskStatus } from '../types';
 
@@ -32,7 +34,7 @@ const app = new Hono()
 
       const member = await getMemberById({ userId: user.id });
 
-      if (!member || find(member?.workspaces, (workspace) => workspace.id === workspaceId)) {
+      if (!member || !find(member?.workspaces, (workspace) => workspace.id === workspaceId)) {
         return c.json(
           {
             error: 'Não autorizado: Você não é membro deste workspace'
@@ -85,6 +87,51 @@ const app = new Hono()
       position: newPosition
     });
 
+    return c.json({
+      data: task
+    });
+  })
+  .delete('/:projectId/:taskId', sessionMiddleware, async (c) => {
+    const user = c.get('user');
+    const { taskId, projectId } = c.req.param();
+
+    const task = await getTask({ id: taskId, projectId });
+
+    if (!task) {
+      return c.json(
+        {
+          error: 'Não encontrado: Tarefa não encontrada'
+        },
+        404
+      );
+    }
+
+    const member = await getMemberById({ userId: user.id });
+
+    if (!member) {
+      return c.json(
+        {
+          error: 'Não autorizado: Você não é membro deste projeto'
+        },
+        401
+      );
+    }
+
+    const isMemberProject = find(
+      member.workspaces,
+      (workspace) => workspace.id === task.workspaceId
+    );
+
+    if (!isMemberProject) {
+      return c.json(
+        {
+          error: 'Não autorizado: Você não é membro deste workspace'
+        },
+        401
+      );
+    }
+
+    await deleteTask({ id: taskId, projectId });
     return c.json({
       data: task
     });

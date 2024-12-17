@@ -58,7 +58,6 @@ const app = new Hono()
       }
 
       const isExistingWorkspace = await getWorkspaceById({ userId: user.id, workspaceId });
-
       if (!isExistingWorkspace) {
         return c.json(
           {

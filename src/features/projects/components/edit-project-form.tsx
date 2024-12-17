@@ -29,7 +29,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
   const router = useRouter();
   //TODO: implementar o zustand por precisaremos das informações do project para popular o formulario de edição
   const { mutate: EditProject, isPending } = useEditProject();
-  const { mutate: DeleteProject } = useDeleteProject();
+  const { mutate: deleteProject } = useDeleteProject();
   const [DeleteDialog, confirmDelete] = useConfirm(
     'Excluir um projeto',
     'Tem certeza que deseja excluir um projeto?',
@@ -57,7 +57,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
   const handleDelete = async () => {
     const ok = await confirmDelete();
     if (!ok) return;
-    DeleteProject(
+    deleteProject(
       { param: { projectId: projectId || '' } },
       {
         onSuccess: () => {

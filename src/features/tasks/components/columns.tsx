@@ -116,8 +116,7 @@ export const columns: ColumnDef<Task>[] = [
     }
   },
   {
-    accessorKey: 'ações',
-
+    id: 'actions',
     cell: ({ row }) => {
       const id = row.original.id;
       const projectId = row.original.projectId;
