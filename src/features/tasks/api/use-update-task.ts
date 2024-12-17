@@ -5,27 +5,29 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Task = typeof client.api.task;
 
-type ResponseType = InferResponseType<Task['$post'], 201>;
-type RequestType = InferRequestType<Task['$post']>['json'];
+type ResponseType = InferResponseType<Task[':taskId']['$patch'], 201>;
+type RequestType = InferRequestType<Task[':taskId']['$patch']>;
 
-export const useCreateTask = () => {
+export const useUpdateTask = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
-      const response = await client.api.task['$post']({
-        json
+    mutationFn: async ({ json, param }) => {
+      const response = await client.api.task[':taskId']['$patch']({
+        json,
+        param
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao criar a tarefa!');
+        throw new Error('Erro ao atualizar a tarefa!');
       }
 
       return await response.json();
     },
     onSuccess: ({ data }) => {
-      toast.success('Tarefa criada com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['tasks', data.workspaceId] });
+      toast.success('Tarefa atualizada com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['task', data.id] });
     },
     onError: (error) => {
       console.error(error);

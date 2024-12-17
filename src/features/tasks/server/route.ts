@@ -11,6 +11,7 @@ import { createTask } from '../services/create-task';
 import { deleteTask } from '../services/delete-task';
 import { getTask } from '../services/get-task';
 import { getTasks } from '../services/get-tasks';
+import { updateTask } from '../services/update-task';
 import { TaskStatus } from '../types';
 
 const app = new Hono()
@@ -57,10 +58,43 @@ const app = new Hono()
       });
     }
   )
-  .post('/', zValidator('form', createTaskSchema), sessionMiddleware, async (c) => {
+  .get(
+    '/:taskId',
+    zValidator(
+      'query',
+      z.object({
+        workspaceId: z.string(),
+        projectId: z.string()
+      })
+    ),
+    sessionMiddleware,
+    async (c) => {
+      const user = c.get('user');
+      const { workspaceId, projectId } = c.req.valid('query');
+      const { taskId } = c.req.param();
+
+      const member = await getMemberById({ userId: user.id });
+
+      if (!member || !find(member?.workspaces, (workspace) => workspace.id === workspaceId)) {
+        return c.json(
+          {
+            error: 'Não autorizado: Você não é membro deste workspace'
+          },
+          401
+        );
+      }
+
+      const task = await getTask({ id: taskId, projectId });
+
+      return c.json({
+        data: task
+      });
+    }
+  )
+  .post('/', zValidator('json', createTaskSchema), sessionMiddleware, async (c) => {
     const user = c.get('user');
     const { workspaceId, projectId, status, assignedId, dueDate, name, description } =
-      c.req.valid('form');
+      c.req.valid('json');
 
     const isExistingWorkspace = await getWorkspaceById({ userId: user.id, workspaceId });
 
@@ -91,6 +125,63 @@ const app = new Hono()
       data: task
     });
   })
+  .patch(
+    '/:taskId',
+    zValidator('json', createTaskSchema.partial()),
+    sessionMiddleware,
+    async (c) => {
+      const user = c.get('user');
+      const { taskId } = c.req.param();
+      const { workspaceId, projectId, status, assignedId, dueDate, name, description } =
+        c.req.valid('json');
+
+      if (!projectId || !workspaceId) {
+        return c.json(
+          {
+            error: 'Não autorizado: WorkspaceId ou ProjectId inválido'
+          },
+          409
+        );
+      }
+
+      const existingTask = await getTask({ id: taskId, projectId });
+
+      if (!existingTask) {
+        return c.json(
+          {
+            error: 'Tarefa não encontrada'
+          },
+          404
+        );
+      }
+
+      const isExistingWorkspace = await getWorkspaceById({ userId: user.id, workspaceId });
+
+      if (!isExistingWorkspace) {
+        return c.json(
+          {
+            error: 'Não autorizado: WorkspaceId inválido'
+          },
+          409
+        );
+      }
+
+      const task = await updateTask({
+        id: taskId,
+        workspaceId,
+        projectId,
+        status,
+        assignedId,
+        dueDate,
+        name,
+        description
+      });
+
+      return c.json({
+        data: task
+      });
+    }
+  )
   .delete('/:projectId/:taskId', sessionMiddleware, async (c) => {
     const user = c.get('user');
     const { taskId, projectId } = c.req.param();

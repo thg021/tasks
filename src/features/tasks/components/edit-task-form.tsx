@@ -26,63 +26,56 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { MemberAvatar } from '@/features/members/components/member-avatar';
 import { useGetProjects } from '@/features/projects/api/use-get-projects';
-import { useParamProjectId } from '@/features/projects/hooks/use-param-project-id';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
-import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateTask } from '../api/use-create-task';
+import type { Task } from '@prisma/client';
+import { useUpdateTask } from '../api/use-update-task';
+import { useEditTaskModal } from '../hooks/use-edit-task-modal';
 import { createTaskSchema, type CreateTaskSchemaProps } from '../schemas';
 import { TaskStatus } from '../types';
 
-type CreateTaskFormProps = {
-  onCancel?: () => void;
+type EditTaskFormProps = {
+  initialValue: Task;
+  id: string;
 };
-export const CreateTaskForm = ({ onCancel }: CreateTaskFormProps) => {
+export const EditTaskForm = ({ initialValue, id }: EditTaskFormProps) => {
   const workspaceId = useWorkspaceId();
-  const projectId = useParamProjectId();
-  const { mutate: createTask } = useCreateTask();
+  const { close } = useEditTaskModal();
+  const { mutate: updateTask } = useUpdateTask();
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({ workspaceId });
 
-  //const router = useRouter();
-
-  const projectSelected = projectId
-    ? projects?.data?.project.filter((project) => project.id === projectId)
-    : projects?.data?.project;
-
-  const workspaceSelected = workspaceId
-    ? projects?.data?.workspace.filter((workspace) => workspace.id === workspaceId)
-    : projects?.data?.workspace;
-
+  const isLoading = isLoadingProjects;
   const form = useForm<CreateTaskSchemaProps>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
-      name: '',
-      projectId: projectId || '',
-      assignedId: '',
-      status: TaskStatus.TODO,
-      description: '',
-      workspaceId: workspaceId || ''
+      ...initialValue,
+      description: initialValue.description ? initialValue.description : undefined,
+      dueDate: initialValue.dueDate ? new Date(initialValue.dueDate) : undefined,
+      status: (initialValue.status as TaskStatus) || TaskStatus.TODO
     }
   });
 
-  const onSubmit = (values: CreateTaskSchemaProps) => {
-    const finalValues = {
-      ...values
+  const onSubmit = (values: Partial<CreateTaskSchemaProps>) => {
+    const json = {
+      ...values,
+      id
     };
 
-    createTask(finalValues, {
-      onSuccess: () => {
-        form.reset();
-        //redirect for new task
-        onCancel?.();
-      },
-      onError: (error) => {
-        console.error(error);
+    updateTask(
+      { json, param: { taskId: id } },
+      {
+        onSuccess: () => {
+          //redirect for new task
+          close();
+        },
+        onError: (error) => {
+          console.error(error);
+        }
       }
-    });
+    );
   };
 
-  if (isLoadingProjects) {
+  if (isLoading) {
     return (
       <Card className="size-full border-none shadow-none">
         <CardContent>
@@ -95,7 +88,7 @@ export const CreateTaskForm = ({ onCancel }: CreateTaskFormProps) => {
   return (
     <Card className="size-full border-none shadow-none">
       <CardHeader className="flex p-7">
-        <CardTitle className="text-xl font-bold">Criar uma nova tarefa</CardTitle>
+        <CardTitle className="text-xl font-bold">Editar tarefa</CardTitle>
       </CardHeader>
       <div className="px-7">
         <Separator />
@@ -212,8 +205,8 @@ export const CreateTaskForm = ({ onCancel }: CreateTaskFormProps) => {
                         </FormControl>
                         <FormMessage />
                         <SelectContent>
-                          {projectSelected &&
-                            map(projectSelected, (project) => (
+                          {projects?.data.project &&
+                            map(projects?.data.project, (project) => (
                               <SelectItem key={project.id} value={project.id}>
                                 <div className="flex items-center gap-x-2">
                                   <MemberAvatar name={project.name} className="size-6" />
@@ -241,8 +234,8 @@ export const CreateTaskForm = ({ onCancel }: CreateTaskFormProps) => {
                         </FormControl>
                         <FormMessage />
                         <SelectContent>
-                          {workspaceSelected &&
-                            map(workspaceSelected, (workspace) => (
+                          {projects?.data.workspace &&
+                            map(projects?.data.workspace, (workspace) => (
                               <SelectItem key={workspace.id} value={workspace.id}>
                                 <div className="flex items-center gap-x-2">
                                   <MemberAvatar name={workspace.name} className="size-6" />
@@ -275,17 +268,11 @@ export const CreateTaskForm = ({ onCancel }: CreateTaskFormProps) => {
             </div>
             <Separator />
             <div className="flex items-center justify-between">
-              <Button
-                type="button"
-                onClick={onCancel}
-                size="lg"
-                variant="secondary"
-                className={cn(!onCancel && 'invisible')}
-              >
+              <Button type="button" onClick={close} size="lg" variant="secondary">
                 Cancelar
               </Button>
               <Button size="lg" type="submit" disabled={isLoadingProjects}>
-                Criar tarefa
+                Atualizar tarefa
               </Button>
             </div>
           </form>
