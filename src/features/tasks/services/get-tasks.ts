@@ -8,9 +8,17 @@ interface TaskFilters {
   status?: TaskStatus;
   search?: string;
   dueDate?: Date | { start?: Date; end?: Date };
+  pagination?: {
+    page: number;
+    limit: number;
+  };
 }
 
 export const getTasks = async (filters: TaskFilters) => {
+  const page = Number(filters.pagination?.page) || 1;
+  const limit = Number(filters.pagination?.limit) || 2;
+  const skip = (page - 1) * limit;
+
   const where: Prisma.TaskWhereInput = {
     AND: []
   };
@@ -50,7 +58,9 @@ export const getTasks = async (filters: TaskFilters) => {
     }
   }
 
-  return await db.task.findMany({
+  const tasks = await db.task.findMany({
+    skip,
+    take: limit,
     where,
     include: {
       project: true,
@@ -77,4 +87,17 @@ export const getTasks = async (filters: TaskFilters) => {
       createdAt: 'desc'
     }
   });
+  const total = await db.task.count({ where });
+  const totalPages = Math.ceil(total / limit);
+  return {
+    tasks,
+    metadata: {
+      total,
+      pages: totalPages,
+      currentPage: page,
+      perPage: limit,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1
+    }
+  };
 };

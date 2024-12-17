@@ -30,7 +30,17 @@ export const useGetTasks = ({
 
       if (!response.ok) {
         return {
-          data: []
+          data: {
+            tasks: [],
+            metadata: {
+              total: 0,
+              pages: 0,
+              currentPage: 0,
+              perPage: 1,
+              hasNextPage: false,
+              hasPreviousPage: false
+            }
+          }
         };
       }
 

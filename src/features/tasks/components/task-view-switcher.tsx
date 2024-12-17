@@ -22,7 +22,7 @@ export const TaskViewSwitcher = () => {
   const { open } = useCreateTaskModal();
   const workspaceId = useWorkspaceId();
   const projectIdParam = useParamProjectId();
-  const { data: tasks } = useGetTasks({
+  const { data: result } = useGetTasks({
     workspaceId,
     projectId: projectIdParam ?? projectId,
     status: status ?? undefined,
@@ -55,7 +55,7 @@ export const TaskViewSwitcher = () => {
         <Separator className="my-4" />
         <>
           <TabsContent className="mt-0" value="table">
-            <DataTable columns={columns} data={tasks?.data || []} />
+            <DataTable columns={columns} data={result?.data.tasks || []} />
           </TabsContent>
           <TabsContent className="mt-0" value="kanban">
             kanban
