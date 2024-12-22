@@ -1,3 +1,4 @@
+import { CreateMemberModal } from '@/features/members/components/create-member-modal';
 import { CreateProjectModal } from '@/features/projects/components/create-project-modal';
 import { EditProjectModal } from '@/features/projects/components/edit-project-modal';
 import { CreateTaskModal } from '@/features/tasks/components/create-task-modal';
@@ -12,6 +13,7 @@ export const Modals = () => {
       <EditProjectModal />
       <CreateTaskModal />
       <EditTaskModal />
+      <CreateMemberModal />
     </>
   );
 };

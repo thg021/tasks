@@ -13,10 +13,9 @@ import { useEditTaskModal } from '../hooks/use-edit-task-modal';
 
 type TaskActionsProps = {
   id: string;
-  projectId: string;
   children: React.ReactNode;
 };
-export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
+export const TaskActions = ({ id, children }: TaskActionsProps) => {
   const router = useRouter();
   const { open } = useEditTaskModal();
   const workspaceId = useWorkspaceId();
@@ -33,7 +32,7 @@ export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
     deleteTask({
       param: {
         taskId: id,
-        projectId
+        workspaceId
       }
     });
   };

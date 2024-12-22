@@ -3,13 +3,13 @@ import { db } from '@/lib/db.prisma';
 
 type DeleteTaskProps = {
   id: string;
-  projectId: string;
+  workspaceId: string;
 };
 
-export const deleteTask = async ({ id, projectId }: DeleteTaskProps) =>
+export const deleteTask = async ({ id, workspaceId }: DeleteTaskProps) =>
   await db.task.delete({
     where: {
       id,
-      projectId
+      workspaceId
     }
   });

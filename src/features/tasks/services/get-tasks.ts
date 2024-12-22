@@ -16,7 +16,7 @@ interface TaskFilters {
 
 export const getTasks = async (filters: TaskFilters) => {
   const page = Number(filters.pagination?.page) || 1;
-  const limit = Number(filters.pagination?.limit) || 2;
+  const limit = Number(filters.pagination?.limit) || 10;
   const skip = (page - 1) * limit;
 
   const where: Prisma.TaskWhereInput = {

@@ -8,7 +8,7 @@ export const updateTask = async (data: UpdateTaskProps) =>
   await db.task.update({
     where: {
       id: data.id,
-      projectId: data.projectId
+      workspaceId: data.workspaceId
     },
     data
   });

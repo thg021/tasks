@@ -70,7 +70,7 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const user = c.get('user');
-      const { workspaceId, projectId } = c.req.valid('query');
+      const { workspaceId } = c.req.valid('query');
       const { taskId } = c.req.param();
 
       const member = await getMemberById({ userId: user.id });
@@ -84,7 +84,7 @@ const app = new Hono()
         );
       }
 
-      const task = await getTask({ id: taskId, projectId });
+      const task = await getTask({ id: taskId, workspaceId });
 
       return c.json({
         data: task
@@ -144,7 +144,7 @@ const app = new Hono()
         );
       }
 
-      const existingTask = await getTask({ id: taskId, projectId });
+      const existingTask = await getTask({ id: taskId, workspaceId });
 
       if (!existingTask) {
         return c.json(
@@ -182,11 +182,11 @@ const app = new Hono()
       });
     }
   )
-  .delete('/:projectId/:taskId', sessionMiddleware, async (c) => {
+  .delete('/:workspaceId/:taskId', sessionMiddleware, async (c) => {
     const user = c.get('user');
-    const { taskId, projectId } = c.req.param();
+    const { taskId, workspaceId } = c.req.param();
 
-    const task = await getTask({ id: taskId, projectId });
+    const task = await getTask({ id: taskId, workspaceId });
 
     if (!task) {
       return c.json(
@@ -222,7 +222,7 @@ const app = new Hono()
       );
     }
 
-    await deleteTask({ id: taskId, projectId });
+    await deleteTask({ id: taskId, workspaceId });
     return c.json({
       data: task
     });

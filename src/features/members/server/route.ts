@@ -1,14 +1,13 @@
 import { Hono } from 'hono';
 import { map, size } from 'lodash';
 import { z } from 'zod';
+import { getUserByEmail } from '@/features/auth/services/user';
 import { getMemberById } from '@/features/members/services/get-member-by-id';
-import { MemberRole } from '@/features/members/types';
-import { createWorkspaceSchema } from '@/features/workspaces/schemas';
-import { createWorkspace } from '@/features/workspaces/services';
-import type { CreateWorkspaceProps } from '@/features/workspaces/types';
+import { db } from '@/lib/db.prisma';
 import { isWorkspaceAdmin } from '@/lib/is-workspace-admin';
 import { sessionMiddleware } from '@/lib/session-middleware';
 import { zValidator } from '@hono/zod-validator';
+import { createMemberSchema } from '../schemas';
 import { getMembers } from '../services/get-members';
 
 const app = new Hono()
@@ -48,120 +47,43 @@ const app = new Hono()
       total: size(member)
     });
   })
-  .post('/', zValidator('form', createWorkspaceSchema), sessionMiddleware, async (c) => {
-    const user = c.get('user');
-    const { name } = c.req.valid('form');
+  .post('/', zValidator('json', createMemberSchema), sessionMiddleware, async (c) => {
+    const { name, email, workspaceId, projectId } = c.req.valid('json');
 
-    //  let uploadedImageUrl: string | undefined;
-    const createWorkspacesData: CreateWorkspaceProps = {
-      name,
-      userId: user.id,
-      role: MemberRole.ADMIN
-    };
-    // if (image instanceof File) {
-    //   const file = await storage.createFile(IMAGES_ID, ID.unique(), image);
-    //   const arrayBuffer = await storage.getFilePreview(IMAGES_ID, file.$id);
-    //   uploadedImageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
-    //   createWorkspacesData.imageUrl = uploadedImageUrl;
-    //   createWorkspacesData.storageId = file.$id;
-    // }
+    const existingUser = await getUserByEmail(email);
 
-    const workspace = await createWorkspace(createWorkspacesData);
+    if (existingUser) {
+      return c.json(
+        {
+          error: 'Email já cadastrado'
+        },
+        400
+      );
+    }
+
+    const member = await db.user.create({
+      data: {
+        name,
+        email,
+        projects: {
+          connect: projectId?.map((id) => ({ id })) // Conecte cada projeto individualmente
+        },
+        members: {
+          create: {
+            role: 'USER',
+            workspaces: {
+              connect: {
+                id: workspaceId
+              }
+            }
+          }
+        }
+      }
+    });
 
     return c.json({
-      data: workspace
+      data: member
     });
   });
-// .patch("/:workspaceId", sessionMiddleware, zValidator('form', updateWorkspaceSchema), async (c) => {
-//   const user = c.get("user");
-//   // // const storage = c.get("storage");
-//   const { workspaceId } = c.req.param()
-//   const { name, image } = c.req.valid("form");
-
-//   const member = await db.member.findFirst({
-//     where: {
-//       userId: user.id,
-//       workspaceId,
-//       role: "ADMIN"
-//     }
-//   });
-
-//   if (!member) {
-//     return c.json({
-//       error: "Não autorizado: Somente administrator pode atualizar o cadastro"
-//     }, 401);
-//   }
-
-//   const workspace = await getWorkspaceById({userId: user.id, workspaceId});
-//   if (!workspace) {
-//     return c.json({
-//       error: "Workspace não existe"
-//     }, 404);
-//   }
-
-//    const updateData: Prisma.WorkspaceUpdateInput = {};
-//    updateData.imageUrl = workspace.imageUrl;
-//    if (name) {
-//      updateData.name = name;
-//    }
-
-//    //TODO: implementar upload de imagem
-
-//   // if ((image instanceof File || !!image) && workspace.storageId) {
-//   //   console.log("deletando arquivo")
-//   //   // try {
-//   //   //   await storage.deleteFile(IMAGES_ID, workspace.storageId);
-//   //   // } catch (error) {
-//   //   //   console.log(error)
-//   //   // }
-//   //   updateData.imageUrl = "";
-//   // }
-
-//   // if (image instanceof File) {
-//   //   const file = await storage.createFile(IMAGES_ID, ID.unique(), image);
-//   //   const arrayBuffer = await storage.getFilePreview(IMAGES_ID, file.$id);
-//   //   updateData.imageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
-//   //   updateData.storageId = file.$id;
-//   // }
-
-//   const updatedWorkspace = await db.workspace.update({
-//     where: { id: workspaceId },
-//     data: updateData,
-//    });
-
-//   return c.json({
-//     data: updatedWorkspace,
-//   });
-
-// })
-// .delete("/:workspaceId", sessionMiddleware, async (c) => {
-//   const user = c.get("user");
-//   const { workspaceId } = c.req.param()
-
-//   if (!workspaceId) {
-//     return c.json({
-//       error: "Não autorizado: WorkspaceId inválido"
-//     }, 401);
-//   }
-
-//   const member = await getMemberById({ userId: user.id, workspaceId });
-
-//   if (!member) {
-//     return c.json({
-//       error: "Não autorizado: Somente administrator pode deletar o cadastro"
-//     }, 401);
-//   }
-
-//   deleteWorkspace({ workspaceId });
-
-//   await db.workspace.delete({
-//     where: { id: workspaceId }
-//    });
-
-//   return c.json({
-//     data: workspaceId,
-//   });
-
-// })
 
 export default app;

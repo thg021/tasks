@@ -5,15 +5,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Task = typeof client.api.task;
 
-type ResponseType = InferResponseType<Task[':projectId'][':taskId']['$delete'], 200>;
-type RequestType = InferRequestType<Task[':projectId'][':taskId']['$delete']>;
+type ResponseType = InferResponseType<Task[':workspaceId'][':taskId']['$delete'], 200>;
+type RequestType = InferRequestType<Task[':workspaceId'][':taskId']['$delete']>;
 
 export const useDeleteTask = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param }) => {
-      const response = await client.api.task[':projectId'][':taskId']['$delete']({
+      const response = await client.api.task[':workspaceId'][':taskId']['$delete']({
         param
       });
 

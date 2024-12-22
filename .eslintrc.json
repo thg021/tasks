@@ -34,6 +34,7 @@
     "import"
   ],
   "rules": {
+    "react/no-unknown-property": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "react/react-in-jsx-scope": 0,

@@ -13,16 +13,18 @@ type DatePickerProps = {
   onChange: (date: Date | undefined) => void;
   className?: string;
   placeholder?: string;
+  openInModal?: boolean;
 };
 
 export const DatePicker = ({
   value,
   onChange,
   className,
-  placeholder = 'Selecione uma data'
+  placeholder = 'Selecione uma data',
+  openInModal = true
 }: DatePickerProps) => {
   return (
-    <Popover>
+    <Popover modal={openInModal}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"

@@ -2,14 +2,14 @@ import { db } from '@/lib/db.prisma';
 
 type GetTaskId = {
   id: string;
-  projectId: string;
+  workspaceId: string;
 };
 
-export const getTask = async ({ id, projectId }: GetTaskId) =>
+export const getTask = async ({ id, workspaceId }: GetTaskId) =>
   await db.task.findFirst({
     where: {
       id,
-      projectId
+      workspaceId
     },
     include: {
       project: true
