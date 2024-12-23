@@ -26,6 +26,8 @@ export const useCreateMember = () => {
     onSuccess: ({ data }) => {
       toast.success('Membro criado com sucesso!');
       queryClient.invalidateQueries({ queryKey: ['member', data] });
+      queryClient.invalidateQueries({ queryKey: ['workspace', data.workspaceId] });
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
     },
     onError: (error) => {
       console.error(error);

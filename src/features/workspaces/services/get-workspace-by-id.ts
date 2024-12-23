@@ -17,6 +17,8 @@ export const getWorkspaceById = async ({ userId, workspaceId }: GetWorkspaceById
       }
     },
     include: {
-      projects: true
+      projects: true,
+      members: true,
+      tasks: true
     }
   });

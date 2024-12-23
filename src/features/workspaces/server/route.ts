@@ -37,9 +37,9 @@ const app = new Hono()
 
     const { workspaceId } = c.req.param();
     const workspace = await getWorkspaceById({ userId: user.id, workspaceId });
-
+    const totalMembers = size(workspace?.members);
     return c.json({
-      data: workspace,
+      data: { workspace, totalMembers },
       total: size(workspace)
     });
   })

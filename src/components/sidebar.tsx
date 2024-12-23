@@ -9,7 +9,7 @@ export const Sidebar = () => {
   return (
     <aside className="size-full bg-neutral-100 p-4 dark:dark:bg-neutral-900">
       <Link href="/">
-        <Image src="/logo.svg" alt="Logo" width={32} height={32} />
+        <Image src="/logo.svg" alt="Logo" width={24} height={24} />
       </Link>
       <Separator className="my-6" />
       <WorkspaceSwitcher />

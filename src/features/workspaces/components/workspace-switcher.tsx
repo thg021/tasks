@@ -11,9 +11,8 @@ import {
 } from '@/components/ui/select';
 import { useGetWorkspaces } from '@/features/workspaces/api/use-get-workspaces';
 import { WorkspaceAvatar } from '@/features/workspaces/components/workspace-avatar';
-import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
-import { useCreateWorkspaceModal } from '../hooks/use-create-workspaces-modal';
-import { WorkspaceSwitcherLoading } from './workspace-switcher-loading';
+import { WorkspaceSwitcherLoading } from '@/features/workspaces/components/workspace-switcher-loading';
+import { useWorkspaceId, useCreateWorkspaceModal } from '@/features/workspaces/hooks';
 
 export const WorkspaceSwitcher = () => {
   const { data: workspaces, isLoading, isFetching } = useGetWorkspaces();
@@ -36,7 +35,7 @@ export const WorkspaceSwitcher = () => {
         />
       </div>
       <Select onValueChange={onSelect} value={isFetching ? 'loading' : workspaceId}>
-        <SelectTrigger className="w-full bg-neutral-200 p-1 font-medium dark:bg-neutral-800">
+        <SelectTrigger className="w-full bg-neutral-200 px-1 py-3 font-medium dark:bg-neutral-800">
           <SelectValue placeholder="Selecione um workspace" />
         </SelectTrigger>
         {isFetching && (
@@ -54,7 +53,12 @@ export const WorkspaceSwitcher = () => {
             <SelectItem key={workspace.id} value={workspace.id}>
               <div className="flex items-center justify-start gap-1 font-medium">
                 <WorkspaceAvatar image={workspace.imageUrl || ''} name={workspace.name} />
-                <span className="truncate">{workspace.name}</span>
+                <div className="flex flex-col items-start">
+                  <span className="truncate font-bold">{workspace.name}</span>
+                  <div className="flex items-center gap-x-1 text-xs text-neutral-500 dark:text-neutral-100">
+                    {workspace.members.length} membro(s)
+                  </div>
+                </div>
               </div>
             </SelectItem>
           ))}
