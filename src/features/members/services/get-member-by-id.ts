@@ -9,7 +9,7 @@ type GetMemberByIdProps = {
 export const getMemberById = async ({ id, workspaceId }: GetMemberByIdProps) =>
   await db.member.findFirst({
     where: {
-      id
+      userId: id
     },
     include: {
       user: {

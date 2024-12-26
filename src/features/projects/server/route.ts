@@ -21,7 +21,9 @@ const app = new Hono()
     async (c) => {
       const { workspaceId } = c.req.valid('query');
       const projects = await getProjects({ workspaceId });
-      return c.json(projects);
+      return c.json({
+        data: projects
+      });
     }
   )
   .get(

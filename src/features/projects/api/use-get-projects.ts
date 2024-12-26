@@ -24,7 +24,7 @@ export const useGetProjects = ({ workspaceId }: GetProjectsProps) => {
         };
       }
 
-      const data = await response.json();
+      const { data } = await response.json();
       const transformedData = transformProjectsData(data);
       return { data: { ...transformedData } };
     }
