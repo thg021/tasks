@@ -3,18 +3,18 @@ import { toast } from 'sonner';
 import { client } from '@/lib/rpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const apiMemberPost = client.api.members['workspaces'][':workspaceId']['$post'];
-type MemberPost = typeof apiMemberPost;
+const apiMemberPatch = client.api.members[':memberId']['workspaces'][':workspaceId']['$patch'];
+type MemberPatch = typeof apiMemberPatch;
 
-type ResponseType = InferResponseType<MemberPost, 201>;
-type RequestType = InferRequestType<MemberPost>;
+type ResponseType = InferResponseType<MemberPatch, 201>;
+type RequestType = InferRequestType<MemberPatch>;
 
-export const useCreateMember = () => {
+export const useUpdateMember = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json, param }) => {
-      const response = await apiMemberPost({
+      const response = await apiMemberPatch({
         json,
         param
       });
@@ -34,7 +34,7 @@ export const useCreateMember = () => {
     },
     onError: (error) => {
       console.error(error);
-      toast.error('Erro ao criar membro!');
+      toast.error('Erro ao atualizar membro!');
     }
   });
 

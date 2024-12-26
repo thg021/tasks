@@ -4,16 +4,18 @@ import { client } from '@/lib/rpc';
 import type { ErrorResponse } from '@/types/routes.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-type Member = typeof client.api.members;
+const apiDeleteMember = client.api.members[':memberId']['workspaces'][':workspaceId']['$delete'];
 
-type ResponseType = InferResponseType<Member[':workspaceId'][':memberId']['$delete'], 204>;
-type RequestType = InferRequestType<Member[':workspaceId'][':memberId']['$delete']>;
+type Member = typeof apiDeleteMember;
+
+type ResponseType = InferResponseType<Member, 204>;
+type RequestType = InferRequestType<Member>;
 
 export const useDeleteMember = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param }) => {
-      const response = await client.api.members[':workspaceId'][':memberId']['$delete']({ param });
+      const response = await apiDeleteMember({ param });
 
       if (!response.ok) {
         const errorData = (await response.json()) as ErrorResponse;

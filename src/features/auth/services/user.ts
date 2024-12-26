@@ -3,7 +3,11 @@ import { db } from '@/lib/db.prisma';
 export const getUserByEmail = async (email: string) => {
   try {
     const user = await db.user.findUnique({
-      where: { email }
+      where: { email },
+      include: {
+        projects: true,
+        members: true
+      }
     });
 
     return user;

@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { map } from 'lodash';
+import { useRouter } from 'next/navigation';
+import { map, size } from 'lodash';
 import { MoveLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,28 +17,39 @@ import {
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
-import { useGetProjects } from '@/features/projects/api/use-get-projects';
-import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
+import { useMemberIdParams } from '@/features/members/hooks/use-member-id';
+import { createMemberSchema, type CreateMemberSchemaProps } from '@/features/members/schemas';
+import { useWorkspaceId } from '@/features/workspaces/hooks';
 import { cn } from '@/lib/utils';
+import type { Member } from '@/types/db/Member';
+import type { Project } from '@/types/db/Project';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateMember } from '../api/use-create-member';
-import { createMemberSchema, type CreateMemberSchemaProps } from '../schemas';
-type CreateMemberProps = {
+import { useUpdateMember } from '../api/use-update-member';
+
+type EditMemberProps = {
   onCancel?: () => void;
+  initialData: Member & { projects: Project[] };
 };
 
-export const CreateMemberForm = ({ onCancel }: CreateMemberProps) => {
-  const [selectedProject, setSelectedProject] = useState<string[]>([]);
+export const EditMemberForm = ({ onCancel, initialData }: EditMemberProps) => {
+  const [selectedProject, setSelectedProject] = useState<string[]>(
+    map(initialData.user?.projects, (project) => project.id)
+  );
+  const { mutate: updateMember } = useUpdateMember();
 
+  const router = useRouter();
+
+  const memberId = useMemberIdParams();
   const workspaceId = useWorkspaceId();
-  const { data, isLoading: isLoadingProject } = useGetProjects({ workspaceId });
-  const { mutate: createMember } = useCreateMember();
-
   const form = useForm<CreateMemberSchemaProps>({
     resolver: zodResolver(createMemberSchema),
     defaultValues: {
-      name: '',
-      email: ''
+      name: initialData.user?.name as string,
+      email: initialData.user?.email as string,
+      projectsId:
+        size(initialData.user?.projects) > 0
+          ? map(initialData.user?.projects, (project) => project.id)
+          : undefined
     }
   });
 
@@ -48,13 +60,14 @@ export const CreateMemberForm = ({ onCancel }: CreateMemberProps) => {
         projectsId: [...selectedProject]
       },
       param: {
-        workspaceId
+        workspaceId,
+        memberId
       }
     };
-    createMember(finalValues, {
+
+    updateMember(finalValues, {
       onSuccess: () => {
-        form.reset();
-        setSelectedProject([]);
+        router.refresh();
         onCancel?.();
       },
       onError: (error) => {
@@ -63,11 +76,10 @@ export const CreateMemberForm = ({ onCancel }: CreateMemberProps) => {
     });
   };
 
-  if (isLoadingProject) {
-    return <div>Carregando</div>;
-  }
-
-  const projects = map(data?.data.project, (item) => ({ value: item.id, label: item.name }));
+  const projectsWorkspaces = map(initialData.projects, (item) => ({
+    value: item.id,
+    label: item.name
+  }));
 
   return (
     <Card className="size-full border-none shadow-none">
@@ -75,7 +87,7 @@ export const CreateMemberForm = ({ onCancel }: CreateMemberProps) => {
         <Button variant="secondary" onClick={() => window.history.back()}>
           <MoveLeft className="size-4" />
         </Button>
-        <CardTitle className="text-xl font-bold">Criar um novo membro</CardTitle>
+        <CardTitle className="text-xl font-bold">{initialData.user?.name}</CardTitle>
       </CardHeader>
       <div className="px-7">
         <Separator />
@@ -112,12 +124,12 @@ export const CreateMemberForm = ({ onCancel }: CreateMemberProps) => {
                   )}
                 />
                 <MultiSelect
-                  options={projects}
+                  options={projectsWorkspaces}
                   onValueChange={setSelectedProject}
                   defaultValue={selectedProject}
                   placeholder="Selecione os projetos"
                   variant="inverted"
-                  modalPopover={true}
+                  modalPopover
                   maxCount={5}
                 />
               </div>
@@ -133,9 +145,14 @@ export const CreateMemberForm = ({ onCancel }: CreateMemberProps) => {
               >
                 Cancelar
               </Button>
-              <Button size="lg" type="submit">
-                Criar membro
-              </Button>
+              <div className="flex gap-2">
+                <Button size="lg" type="submit">
+                  Deletar
+                </Button>
+                <Button size="lg" type="submit">
+                  Salvar
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

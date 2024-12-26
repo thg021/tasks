@@ -10,11 +10,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
+import { useDeleteMember } from '@/features/members/api/use-delete-member';
 import { useGetMembers } from '@/features/members/api/use-get-members';
 import { MemberAvatar } from '@/features/members/components/member-avatar';
 import MembersListLoading from '@/features/members/components/members-list-loading';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
-import { useDeleteMember } from '../api/use-delete-member';
 
 export const MembersList = () => {
   const router = useRouter();
@@ -29,6 +29,11 @@ export const MembersList = () => {
     };
     deleteMember({ param });
   };
+
+  const handleEditMember = (memberId: string) => {
+    router.push(`/workspaces/${workspaceId}/members/${memberId}/edit`);
+  };
+
   return (
     <Card className="size-full border-neutral-300 shadow-none dark:border-neutral-800">
       <CardHeader className="flex flex-row items-center justify-between p-7">
@@ -74,7 +79,11 @@ export const MembersList = () => {
                     <DropdownMenuItem className="font-medium" onClick={() => {}} disabled={false}>
                       Membro
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="font-medium" onClick={() => {}} disabled={false}>
+                    <DropdownMenuItem
+                      className="font-medium"
+                      onClick={() => handleEditMember(member.id)}
+                      disabled={false}
+                    >
                       Editar
                     </DropdownMenuItem>
                     <DropdownMenuItem

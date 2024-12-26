@@ -24,8 +24,7 @@ export const getProject = async ({ projectId, workspaceId, user }: GetProjectPro
     }
 
     const project = await getProjectService({
-      projectId,
-      userId: user.id
+      projectId
     });
 
     return project;

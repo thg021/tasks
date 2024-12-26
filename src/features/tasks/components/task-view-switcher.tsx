@@ -61,7 +61,7 @@ export const TaskViewSwitcher = () => {
             kanban
           </TabsContent>
           <TabsContent className="mt-0" value="calendar">
-            Calendario
+            Calendário
           </TabsContent>
         </>
       </div>

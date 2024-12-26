@@ -119,7 +119,7 @@ const app = new Hono()
     });
   })
   .delete('/:projectId', sessionMiddleware, async (c) => {
-    const user = c.get('user');
+    // const user = c.get('user');
     const { projectId } = c.req.param();
 
     if (!projectId) {
@@ -131,7 +131,7 @@ const app = new Hono()
       );
     }
 
-    const project = await getProject({ userId: user.id, projectId });
+    const project = await getProject({ projectId });
 
     if (!project) {
       return c.json(

@@ -2,15 +2,25 @@ import 'server-only';
 import { db } from '@/lib/db.prisma';
 
 type GetMemberByIdProps = {
-  userId: string
-}
+  id: string;
+  workspaceId: string;
+};
 
-export const getMemberById = async ({ userId }: GetMemberByIdProps) => await db.member.findFirst({
-  where: {
-    userId
-  },
-  include: {
-    user: true,
-    workspaces: true
-  }
-});
+export const getMemberById = async ({ id, workspaceId }: GetMemberByIdProps) =>
+  await db.member.findFirst({
+    where: {
+      id
+    },
+    include: {
+      user: {
+        include: {
+          projects: {
+            where: {
+              workspaceId
+            }
+          }
+        }
+      },
+      workspaces: true
+    }
+  });

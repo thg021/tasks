@@ -5,8 +5,7 @@ export const createMemberSchema = z.object({
   email: z.string().email({
     message: 'Email é obrigatório'
   }),
-  workspaceId: z.string().optional(),
-  projectId: z.array(z.string()).optional()
+  projectsId: z.array(z.string()).optional()
 });
 
 export type CreateMemberSchemaProps = z.infer<typeof createMemberSchema>;

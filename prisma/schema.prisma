@@ -95,12 +95,11 @@ model Project {
   id        String   @id @default(cuid())
   name      String
   workspaceId  String
-  userId String
   created   DateTime @default(now())
   updated   DateTime @updatedAt
   tasks       Task[]
   workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User[]       
 }
 
 model Task {

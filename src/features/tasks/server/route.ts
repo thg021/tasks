@@ -2,17 +2,17 @@ import { Hono } from 'hono';
 import { find } from 'lodash';
 import { z } from 'zod';
 import { getMemberById } from '@/features/members/services/get-member-by-id';
+import { createTaskSchema } from '@/features/tasks/schemas';
+import { createTask } from '@/features/tasks/services/create-task';
+import { deleteTask } from '@/features/tasks/services/delete-task';
+import { getTask } from '@/features/tasks/services/get-task';
 import { highestPositionTask } from '@/features/tasks/services/get-task-position';
+import { getTasks } from '@/features/tasks/services/get-tasks';
+import { updateTask } from '@/features/tasks/services/update-task';
+import { TaskStatus } from '@/features/tasks/types';
 import { getWorkspaceById } from '@/features/workspaces/services';
 import { sessionMiddleware } from '@/lib/session-middleware';
 import { zValidator } from '@hono/zod-validator';
-import { createTaskSchema } from '../schemas';
-import { createTask } from '../services/create-task';
-import { deleteTask } from '../services/delete-task';
-import { getTask } from '../services/get-task';
-import { getTasks } from '../services/get-tasks';
-import { updateTask } from '../services/update-task';
-import { TaskStatus } from '../types';
 
 const app = new Hono()
   .get(
@@ -33,7 +33,7 @@ const app = new Hono()
       const user = c.get('user');
       const { workspaceId, projectId, assignedId, status, search, dueDate } = c.req.valid('query');
 
-      const member = await getMemberById({ userId: user.id });
+      const member = await getMemberById({ id: user.id, workspaceId });
 
       if (!member || !find(member?.workspaces, (workspace) => workspace.id === workspaceId)) {
         return c.json(
@@ -73,7 +73,7 @@ const app = new Hono()
       const { workspaceId } = c.req.valid('query');
       const { taskId } = c.req.param();
 
-      const member = await getMemberById({ userId: user.id });
+      const member = await getMemberById({ id: user.id, workspaceId });
 
       if (!member || !find(member?.workspaces, (workspace) => workspace.id === workspaceId)) {
         return c.json(
@@ -197,7 +197,7 @@ const app = new Hono()
       );
     }
 
-    const member = await getMemberById({ userId: user.id });
+    const member = await getMemberById({ id: user.id, workspaceId });
 
     if (!member) {
       return c.json(

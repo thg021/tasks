@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { map, size } from 'lodash';
-import { z } from 'zod';
 import { getUserByEmail } from '@/features/auth/services/user';
 import { getMemberById } from '@/features/members/services/get-member-by-id';
 import { getWorkspaceById } from '@/features/workspaces/services';
@@ -13,80 +12,139 @@ import { deleteMember } from '../services/delete-member';
 import { getMembers } from '../services/get-members';
 
 const app = new Hono()
-  .get(
-    '/',
-    sessionMiddleware,
-    isWorkspaceAdmin,
-    zValidator('query', z.object({ workspaceId: z.string() })),
-    async (c) => {
-      const { workspaceId } = c.req.valid('query');
+  .get('/workspaces/:workspaceId', sessionMiddleware, isWorkspaceAdmin, async (c) => {
+    const { workspaceId } = c.req.param();
 
-      const members = await getMembers({ workspaceId });
-      const filteredMembers = map(members, (member) => {
-        return {
-          id: member.id,
-          name: member.user.name || '',
-          email: member.user.email,
-          role: member.role,
-          image: member.user.image,
-          emailVerified: member.user.emailVerified
-        };
-      });
+    const members = await getMembers({ workspaceId });
+    const filteredMembers = map(members, (member) => {
+      return {
+        id: member.id,
+        name: member.user.name || '',
+        email: member.user.email,
+        role: member.role,
+        image: member.user.image,
+        emailVerified: member.user.emailVerified
+      };
+    });
 
-      return c.json({
-        data: [...filteredMembers],
-        total: size(filteredMembers)
-      });
-    }
-  )
-  .get('/:memberId', sessionMiddleware, isWorkspaceAdmin, async (c) => {
-    const { memberId } = c.req.param();
-    const member = await getMemberById({ userId: memberId });
+    return c.json({
+      data: [...filteredMembers],
+      total: size(filteredMembers)
+    });
+  })
+  .get('/:memberId/workspaces/:workspaceId', sessionMiddleware, isWorkspaceAdmin, async (c) => {
+    const { memberId, workspaceId } = c.req.param();
+
+    const member = await getMemberById({ id: memberId, workspaceId });
 
     return c.json({
       data: member,
       total: size(member)
     });
   })
-  .post('/', zValidator('json', createMemberSchema), sessionMiddleware, async (c) => {
-    const { name, email, workspaceId, projectId } = c.req.valid('json');
+  .post(
+    '/workspaces/:workspaceId',
+    zValidator('json', createMemberSchema),
+    sessionMiddleware,
+    async (c) => {
+      const { name, email, projectsId } = c.req.valid('json');
+      const { workspaceId } = c.req.param();
+      const existingUser = await getUserByEmail(email);
 
-    const existingUser = await getUserByEmail(email);
+      if (existingUser) {
+        return c.json(
+          {
+            error: 'Email já cadastrado'
+          },
+          400
+        );
+      }
 
-    if (existingUser) {
-      return c.json(
-        {
-          error: 'Email já cadastrado'
-        },
-        400
-      );
-    }
-
-    const member = await db.user.create({
-      data: {
-        name,
-        email,
-        projects: {
-          connect: projectId?.map((id) => ({ id })) // Conecte cada projeto individualmente
-        },
-        members: {
-          create: {
-            role: 'USER',
-            workspaces: {
-              connect: {
-                id: workspaceId
+      const member = await db.user.create({
+        data: {
+          name,
+          email,
+          members: {
+            create: {
+              role: 'USER',
+              workspaces: {
+                connect: {
+                  id: workspaceId
+                }
               }
             }
           }
         }
-      }
-    });
+      });
 
-    return c.json({
-      data: { ...member, workspaceId }
-    });
-  })
-  .delete('/:workspaceId/:memberId', sessionMiddleware, isWorkspaceAdmin, async (c) => {
+      if (member && size(projectsId) > 0) {
+        await db.user.update({
+          where: { id: member.id },
+          data: {
+            projects: {
+              connect: projectsId?.map((id) => ({ id }))
+            }
+          }
+        });
+      }
+
+      return c.json({
+        data: { ...member, workspaceId }
+      });
+    }
+  )
+  .patch(
+    '/:memberId/workspaces/:workspaceId',
+    zValidator('json', createMemberSchema),
+    sessionMiddleware,
+    async (c) => {
+      const { name, email, projectsId } = c.req.valid('json');
+      const { workspaceId, memberId } = c.req.param();
+      const existingUser = await getUserByEmail(email);
+
+      if (!existingUser) {
+        return c.json(
+          {
+            error: 'Usuário não existe'
+          },
+          400
+        );
+      }
+
+      const member = await getMemberById({ id: memberId, workspaceId });
+
+      if (!member) {
+        return c.json(
+          {
+            error: 'Membro não existe'
+          },
+          400
+        );
+      }
+
+      try {
+        await db.user.update({
+          where: {
+            id: existingUser.id
+          },
+          data: {
+            name,
+            email,
+            projects: {
+              set: map(projectsId, (id) => ({ id }))
+            }
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      return c.json({
+        data: { ...existingUser, workspaceId }
+      });
+    }
+  )
+  .delete('/:memberId/workspaces/:workspaceId', sessionMiddleware, isWorkspaceAdmin, async (c) => {
     const user = c.get('user');
     const { memberId, workspaceId } = c.req.param();
 
