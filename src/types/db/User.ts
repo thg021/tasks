@@ -10,4 +10,20 @@ export type User = {
   createdAt: string | Date;
   updatedAt: string | Date;
   projects: Project[];
+  avatar?: Avatar | null;
+};
+
+export type Avatar = {
+  id: string;
+  userId: string;
+  sex: string;
+  earSize: string;
+  hairStyle: string;
+  eyeStyle: string;
+  glassesStyle: string;
+  noseStyle: string;
+  mouthStyle: string;
+  shirtStyle: string;
+  hatStyle: string;
+  eyeBrowStyle: string;
 };

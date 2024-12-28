@@ -1,9 +1,11 @@
 'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { RiAddCircleFill } from 'react-icons/ri';
+import Avatar, { genConfig, type AvatarConfig } from 'react-nice-avatar';
 import { useRouter } from 'next/navigation';
 import { map, size } from 'lodash';
-import { MoveLeft } from 'lucide-react';
+import { MoveLeft, PencilLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -25,6 +27,7 @@ import type { Member } from '@/types/db/Member';
 import type { Project } from '@/types/db/Project';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUpdateMember } from '../api/use-update-member';
+import { useAvatarModal } from '../hooks/use-avatar-modal';
 
 type EditMemberProps = {
   onCancel?: () => void;
@@ -35,6 +38,9 @@ export const EditMemberForm = ({ onCancel, initialData }: EditMemberProps) => {
   const [selectedProject, setSelectedProject] = useState<string[]>(
     map(initialData.user?.projects, (project) => project.id)
   );
+
+  const { setIsOpen } = useAvatarModal();
+
   const { mutate: updateMember } = useUpdateMember();
 
   const router = useRouter();
@@ -81,6 +87,8 @@ export const EditMemberForm = ({ onCancel, initialData }: EditMemberProps) => {
     label: item.name
   }));
 
+  const config = genConfig({ ...(initialData.user?.avatar as AvatarConfig) });
+  const hasAvatarConfigured = initialData.user?.avatar;
   return (
     <Card className="size-full border-none shadow-none">
       <CardHeader className="flex flex-row items-center justify-start gap-x-4 p-7">
@@ -93,6 +101,39 @@ export const EditMemberForm = ({ onCancel, initialData }: EditMemberProps) => {
         <Separator />
       </div>
       <CardContent className="p-7">
+        <div className="flex items-end gap-x-4 py-6">
+          {hasAvatarConfigured ? (
+            <Avatar className="size-24" {...config} shape="rounded" />
+          ) : (
+            <div className="flex size-24 items-center justify-center rounded-sm bg-gray-200">
+              <p className="text-4xl font-bold uppercase text-gray-800">
+                {initialData.user?.name?.substring(0, 2)}
+              </p>
+            </div>
+          )}
+          <div>
+            <p className="text-sm font-semibold text-gray-600">Avatar do perfil</p>
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-2 w-full"
+              onClick={() => setIsOpen(true)}
+            >
+              {hasAvatarConfigured ? (
+                <>
+                  <PencilLine className="size-4 text-gray-600" />
+                  Editar
+                </>
+              ) : (
+                <>
+                  <RiAddCircleFill className="size-4 text-gray-600" />
+                  Adicionar
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex flex-col space-y-2">
@@ -123,6 +164,7 @@ export const EditMemberForm = ({ onCancel, initialData }: EditMemberProps) => {
                     </FormItem>
                   )}
                 />
+                <h1 className="text-lg font-semibold text-gray-800">Projetos</h1>
                 <MultiSelect
                   options={projectsWorkspaces}
                   onValueChange={setSelectedProject}

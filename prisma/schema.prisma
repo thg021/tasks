@@ -32,6 +32,7 @@ model User {
   sessions      Session[]
   members       Member[]
   projects      Project[]
+  avatar        Avatar?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -116,4 +117,20 @@ model Task {
   assignedId  String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Avatar {
+  id          String       @id @default(cuid())
+  sex         String      // 'man' | 'woman'
+  earSize     String      // 'small' | 'big'
+  hairStyle   String      // depends on sex
+  hatStyle    String      // 'beanie' | 'turban' | 'none'
+  eyeStyle    String      // 'circle' | 'oval' | 'smile'
+  glassesStyle String     // 'round' | 'square' | 'none'
+  noseStyle   String      // 'short' | 'long' | 'round'
+  mouthStyle  String      // 'laugh' | 'smile' | 'peace'
+  shirtStyle  String      // 'hoody' | 'short' | 'polo'
+  eyeBrowStyle String     // 'up' | 'upWoman'
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String      @unique
 }

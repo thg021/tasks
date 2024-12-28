@@ -1,6 +1,6 @@
 import type { User } from '@/features/auth/types';
 import { GetProjectsByUserId } from '@/features/projects/services/get-projects-by-user-id';
-import { getMemberById } from '../services/get-member-by-id';
+import { getMember as getMemberService } from '../services/get-member';
 
 type GetMemberProps = {
   user: User;
@@ -14,7 +14,7 @@ export const getMember = async ({ user, memberId, workspaceId }: GetMemberProps)
       throw new Error('Unauthorized: User not found');
     }
 
-    const member = await getMemberById({
+    const member = await getMemberService({
       id: memberId,
       workspaceId
     });
