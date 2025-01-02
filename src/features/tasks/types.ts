@@ -10,18 +10,18 @@ export enum TaskStatus {
 export type Project = {
   id: string;
   name: string;
-  workspaceId: string;
-  created: string;
+  workspaceId: string | Date;
+  created: string | Date;
   updated: string;
 };
 
 export type Workspace = {
   id: string;
   name: string;
-  imageUrl?: string | null;
-  storageId?: string | null;
-  created: string;
-  updated: string;
+  imageUrl: string | null;
+  storageId: string | null;
+  created: string | Date;
+  updated: string | Date;
   members: Member[];
 };
 
@@ -33,23 +33,24 @@ export type Member = {
 
 export type User = {
   id: string;
-  name?: string | null;
+  name: string | null;
   email: string;
-  image?: string | null;
+  image: string | null;
 };
 
 export type Task = {
   id: string;
   name: string;
-  description?: string | null;
+  url: string | null;
+  description: string | null;
   dueDate: string;
   position: number;
   status: string;
   projectId: string;
-  workspaceId: string;
-  assignedId: string;
+  workspaceId: string | null;
+  assignedId: string | null;
   createdAt: string;
   updatedAt: string;
+  userAssigned?: Member;
   project: Project;
-  workspace: Workspace;
 };

@@ -14,7 +14,67 @@ interface TaskFilters {
   };
 }
 
-export const getTasks = async (filters: TaskFilters) => {
+type Metadata = {
+  total: number;
+  pages: number;
+  currentPage: number;
+  perPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
+type Project = {
+  id: string;
+  name: string;
+  workspaceId: string;
+  created: Date;
+  updated: Date;
+};
+
+type User = {
+  id: string;
+  name: string | null;
+  email: string;
+  image: string | null;
+};
+
+type Member = {
+  id: string;
+  role: string;
+  user: User;
+};
+
+type Workspace = {
+  id: string;
+  name: string;
+  imageUrl: string | null;
+  storageId: string | null;
+  created: Date;
+  updated: Date;
+  members: Member[];
+};
+
+type TaskResponseDB = {
+  tasks: {
+    id: string;
+    name: string;
+    description: string | null;
+    url: string | null;
+    dueDate: Date;
+    position: number;
+    status: TaskStatus;
+    projectId: string;
+    workspaceId: string;
+    assignedId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    project: Project;
+    workspace: Workspace;
+  }[];
+  metadata: Metadata;
+};
+
+export const getTasks = async (filters: TaskFilters): Promise<TaskResponseDB> => {
   const page = Number(filters.pagination?.page) || 1;
   const limit = Number(filters.pagination?.limit) || 10;
   const skip = (page - 1) * limit;
@@ -87,6 +147,7 @@ export const getTasks = async (filters: TaskFilters) => {
       createdAt: 'desc'
     }
   });
+
   const total = await db.task.count({ where });
   const totalPages = Math.ceil(total / limit);
   return {

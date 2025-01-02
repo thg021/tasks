@@ -28,41 +28,44 @@ import { MemberAvatar } from '@/features/members/components/member-avatar';
 import { useGetProjects } from '@/features/projects/api/use-get-projects';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { Task } from '@prisma/client';
+// import type { Task } from '@prisma/client';
 import { useUpdateTask } from '../api/use-update-task';
 import { useEditTaskModal } from '../hooks/use-edit-task-modal';
-import { createTaskSchema, type CreateTaskSchemaProps } from '../schemas';
-import { TaskStatus } from '../types';
+import { editTaskSchema, type EditTaskSchemaProps } from '../schemas';
+import { TaskStatus, type Task } from '../types';
 
 type EditTaskFormProps = {
   initialValue: Task;
-  id: string;
 };
-export const EditTaskForm = ({ initialValue, id }: EditTaskFormProps) => {
+export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
   const workspaceId = useWorkspaceId();
   const { close } = useEditTaskModal();
   const { mutate: updateTask } = useUpdateTask();
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({ workspaceId });
 
   const isLoading = isLoadingProjects;
-  const form = useForm<CreateTaskSchemaProps>({
-    resolver: zodResolver(createTaskSchema),
+  const form = useForm<EditTaskSchemaProps>({
+    resolver: zodResolver(editTaskSchema),
     defaultValues: {
-      ...initialValue,
-      description: initialValue.description ? initialValue.description : undefined,
-      dueDate: initialValue.dueDate ? new Date(initialValue.dueDate) : undefined,
-      status: (initialValue.status as TaskStatus) || TaskStatus.TODO
+      id: initialValue.id,
+      name: initialValue.name,
+      description: initialValue.description || undefined,
+      dueDate: initialValue?.dueDate ? new Date(initialValue.dueDate) : undefined,
+      projectId: initialValue.projectId || undefined,
+      workspaceId: initialValue.workspaceId || undefined,
+      url: initialValue.url || undefined,
+      status: initialValue.status as TaskStatus,
+      assignedId: initialValue.assignedId || undefined
     }
   });
 
-  const onSubmit = (values: Partial<CreateTaskSchemaProps>) => {
+  const onSubmit = (values: Partial<EditTaskSchemaProps>) => {
     const json = {
-      ...values,
-      id
+      ...values
     };
 
     updateTask(
-      { json, param: { taskId: id } },
+      { json, param: { taskId: values.id! } },
       {
         onSuccess: () => {
           //redirect for new task
@@ -132,6 +135,20 @@ export const EditTaskForm = ({ initialValue, id }: EditTaskFormProps) => {
                           </SelectItem>
                         </SelectContent>
                       </Select>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Url</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="text" placeholder="URL" disabled={false} />
+                      </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

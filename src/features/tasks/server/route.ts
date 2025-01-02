@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { find } from 'lodash';
+import { find, map, omit } from 'lodash';
 import { z } from 'zod';
 import { getMemberById } from '@/features/members/services/get-member-by-id';
 import { createTaskSchema } from '@/features/tasks/schemas';
@@ -44,7 +44,7 @@ const app = new Hono()
         );
       }
 
-      const tasks = await getTasks({
+      const { tasks: tasksData, metadata } = await getTasks({
         workspaceId,
         projectId,
         assignedId,
@@ -53,8 +53,23 @@ const app = new Hono()
         dueDate
       });
 
+      const tasks = map(tasksData, (task) => {
+        const userAssigned = find(
+          task.workspace.members,
+          (member) => member.id === task.assignedId
+        );
+
+        return {
+          ...omit(task, ['workspace']),
+          userAssigned
+        };
+      });
+
       return c.json({
-        data: tasks
+        data: {
+          tasks,
+          metadata
+        }
       });
     }
   )
@@ -85,9 +100,24 @@ const app = new Hono()
       }
 
       const task = await getTask({ id: taskId, workspaceId });
+      if (!task) {
+        return c.json(
+          {
+            error: 'Não encontrado: Tarefa não encontrada'
+          },
+          404
+        );
+      }
+      const userAssigned = find(
+        task?.workspace.members,
+        (member) => member.id === task?.assignedId
+      );
 
       return c.json({
-        data: task
+        data: {
+          ...omit(task, ['workspace']),
+          userAssigned
+        }
       });
     }
   )
@@ -132,7 +162,7 @@ const app = new Hono()
     async (c) => {
       const user = c.get('user');
       const { taskId } = c.req.param();
-      const { workspaceId, projectId, status, assignedId, dueDate, name, description } =
+      const { workspaceId, projectId, status, assignedId, dueDate, name, description, url } =
         c.req.valid('json');
 
       if (!projectId || !workspaceId) {
@@ -174,7 +204,8 @@ const app = new Hono()
         assignedId,
         dueDate,
         name,
-        description
+        description,
+        url
       });
 
       return c.json({

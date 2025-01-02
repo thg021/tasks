@@ -107,6 +107,7 @@ model Task {
   id          String    @id @default(cuid())
   name        String
   description String?
+  url         String?
   dueDate     DateTime
   position    Int
   status      TaskStatus

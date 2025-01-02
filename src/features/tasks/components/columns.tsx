@@ -1,7 +1,6 @@
 'use client';
 
 import { differenceInDays } from 'date-fns';
-import { find } from 'lodash';
 import { ArrowUpDown, MoreVerticalIcon, Square } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -72,8 +71,7 @@ export const columns: ColumnDef<Task>[] = [
       );
     },
     cell: ({ row }) => {
-      const assignedId = row.original.assignedId;
-      const assigned = find(row.original.workspace.members, { id: assignedId });
+      const assigned = row.original.userAssigned;
 
       return (
         <div className="flex items-center gap-x-2 text-sm font-medium">

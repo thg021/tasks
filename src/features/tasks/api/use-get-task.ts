@@ -8,7 +8,9 @@ type UseGetTasksProps = {
   taskId: string;
 };
 
-type TasksResponse = InferResponseType<(typeof client.api.task)[':taskId']['$get'], 200>;
+type TasksResponse =
+  | InferResponseType<(typeof client.api.task)[':taskId']['$get'], 200>
+  | { data: null };
 
 export const useGetTask = ({ workspaceId, projectId, taskId }: UseGetTasksProps) => {
   return useQuery({
