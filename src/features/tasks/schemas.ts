@@ -15,6 +15,25 @@ export const createTaskSchema = z.object({
 // Type inference
 export type CreateTaskSchemaProps = z.infer<typeof createTaskSchema>;
 
+export const createInitialTaskSchema = z.object({
+  url: z.string().trim().optional(),
+  name: z.string().trim().min(1, 'Obrigatório'),
+  status: z.string().trim().min(1, 'Obrigatório'),
+  workspaceId: z
+    .string()
+    .trim()
+    .optional()
+    .transform((val) => val || undefined),
+  projectId: z
+    .string()
+    .trim()
+    .optional()
+    .transform((val) => val || undefined)
+});
+
+// Type inference
+export type CreateInitialTaskSchemaProps = z.infer<typeof createInitialTaskSchema>;
+
 export const editTaskSchema = z.object({
   name: z.string().trim().min(1, 'Obrigatório'),
   id: z.string().trim().min(1, 'Obrigatório'),

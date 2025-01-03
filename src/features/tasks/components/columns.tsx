@@ -30,11 +30,10 @@ export const columns: ColumnDef<Task>[] = [
       const today = new Date();
       const endDate = dueDate ? new Date(dueDate) : new Date();
       const diffInDays = differenceInDays(endDate, today);
-
       const textColor = getTextColor(diffInDays);
       return (
         <div className="flex items-center justify-start">
-          <Square className={cn('mr-2 size-2')} stroke="0" fill={textColor} />
+          {dueDate && <Square className={cn('mr-2 size-2')} stroke="0" fill={textColor} />}
           <p className="line-clamp-1">{name}</p>
         </div>
       );
@@ -75,7 +74,9 @@ export const columns: ColumnDef<Task>[] = [
 
       return (
         <div className="flex items-center gap-x-2 text-sm font-medium">
-          <ProjectAvatar name={assigned?.user?.name || ''} className="size-6" isActive={false} />
+          {assigned && (
+            <ProjectAvatar name={assigned?.user?.name || ''} className="size-6" isActive={false} />
+          )}
           <p className="line-clamp-1">{assigned?.user?.name || ''}</p>
         </div>
       );
@@ -94,7 +95,7 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const dueDate = row.original.dueDate;
 
-      return <TaskDate value={dueDate ? dueDate : ''} />;
+      return dueDate && <TaskDate value={dueDate} />;
     }
   },
   {

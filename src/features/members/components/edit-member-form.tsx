@@ -5,7 +5,7 @@ import { RiAddCircleFill } from 'react-icons/ri';
 import Avatar, { genConfig, type AvatarConfig } from 'react-nice-avatar';
 import { useRouter } from 'next/navigation';
 import { map, size } from 'lodash';
-import { MoveLeft, PencilLine } from 'lucide-react';
+import { PencilLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -92,14 +92,9 @@ export const EditMemberForm = ({ onCancel, initialData }: EditMemberProps) => {
   return (
     <Card className="size-full border-none shadow-none">
       <CardHeader className="flex flex-row items-center justify-start gap-x-4 p-7">
-        <Button variant="secondary" onClick={() => window.history.back()}>
-          <MoveLeft className="size-4" />
-        </Button>
         <CardTitle className="text-xl font-bold">{initialData.user?.name}</CardTitle>
       </CardHeader>
-      <div className="px-7">
-        <Separator />
-      </div>
+      <Separator />
       <CardContent className="p-7">
         <div className="flex items-end gap-x-4 py-6">
           {hasAvatarConfigured ? (

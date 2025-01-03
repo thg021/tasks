@@ -2,7 +2,7 @@
 import { Maximize, Minimize } from 'lucide-react';
 import { ResponsiveModal } from '@/components/responsive-modal';
 import { useCreateTaskModal } from '../hooks/use-create-task-modal';
-import { CreateTaskForm } from './create-task-form';
+import { CreateInitialTaskForm } from './create-initial-task-form';
 
 export const CreateTaskModal = () => {
   const { isOpen, setIsOpen, close, isMaximize, toggleMaximize } = useCreateTaskModal();
@@ -18,7 +18,7 @@ export const CreateTaskModal = () => {
           <Maximize className="size-4" />
         )}
       </button>
-      <CreateTaskForm onCancel={close} />
+      <CreateInitialTaskForm onCancel={close} />
     </ResponsiveModal>
   );
 };

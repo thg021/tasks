@@ -2,7 +2,14 @@
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useEditProject } from '@/features/projects/api/use-edit-project';
@@ -46,12 +53,11 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
   return (
     <div className="flex flex-col gap-y-4">
       <Card className="size-full border border-zinc-300 shadow-none">
-        <CardHeader className="flex p-7">
-          <CardTitle className="text-xl font-bold">Edit o projeto</CardTitle>
+        <CardHeader className="flex flex-col items-start justify-start p-4">
+          <CardTitle className="text-xl font-bold">Configurações</CardTitle>
         </CardHeader>
-        <div className="px-7">
-          <Separator />
-        </div>
+
+        <Separator className="w-full" />
         <CardContent className="p-7">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -62,6 +68,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
                     name="name"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel>Nome do Projeto</FormLabel>
                         <FormControl>
                           <Input {...field} placeholder="Nome" disabled={isPending} />
                         </FormControl>

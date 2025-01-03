@@ -43,8 +43,6 @@ export const CreateTaskForm = ({ onCancel }: CreateTaskFormProps) => {
   const { mutate: createTask } = useCreateTask();
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({ workspaceId });
 
-  //const router = useRouter();
-
   const projectSelected = projectId
     ? projects?.data?.project.filter((project) => project.id === projectId)
     : projects?.data?.project;

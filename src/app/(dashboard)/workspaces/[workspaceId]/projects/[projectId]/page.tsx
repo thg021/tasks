@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PencilIcon } from 'lucide-react';
+import { Bolt } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { getUserCurrentSession } from '@/features/auth/actions/get-user-current-session';
@@ -30,8 +30,7 @@ export default async function WorkspaceIdSettingPage({ params }: WorkspaceIdSett
         <h1>{project.name}</h1>
         <Button asChild>
           <Link href={`/workspaces/${params.workspaceId}/projects/${params.projectId}/settings`}>
-            <PencilIcon />
-            <span>Editar projeto</span>
+            <Bolt />
           </Link>
         </Button>
       </div>

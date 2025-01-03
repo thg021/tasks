@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { find, map, omit } from 'lodash';
 import { z } from 'zod';
 import { getMemberById } from '@/features/members/services/get-member-by-id';
-import { createTaskSchema } from '@/features/tasks/schemas';
+import { createInitialTaskSchema, createTaskSchema } from '@/features/tasks/schemas';
 import { createTask } from '@/features/tasks/services/create-task';
 import { deleteTask } from '@/features/tasks/services/delete-task';
 import { getTask } from '@/features/tasks/services/get-task';
@@ -121,10 +121,27 @@ const app = new Hono()
       });
     }
   )
-  .post('/', zValidator('json', createTaskSchema), sessionMiddleware, async (c) => {
+  .post('/', zValidator('json', createInitialTaskSchema), sessionMiddleware, async (c) => {
     const user = c.get('user');
-    const { workspaceId, projectId, status, assignedId, dueDate, name, description } =
-      c.req.valid('json');
+    const { workspaceId, projectId, status, name, url } = c.req.valid('json');
+
+    if (!workspaceId) {
+      return c.json(
+        {
+          error: 'Não autorizado: WorkspaceId inválido'
+        },
+        409
+      );
+    }
+
+    if (!projectId) {
+      return c.json(
+        {
+          error: 'Não autorizado: ProjectId inválido'
+        },
+        409
+      );
+    }
 
     const isExistingWorkspace = await getWorkspaceById({ userId: user.id, workspaceId });
 
@@ -138,16 +155,14 @@ const app = new Hono()
     }
 
     const positionTask = await highestPositionTask({ status, workspaceId });
-    const newPosition = positionTask ? positionTask.position + 1000 : 1000;
+    const newPosition = positionTask ? positionTask.position + 1 : 1;
 
     const task = await createTask({
       workspaceId,
       projectId,
       status,
-      assignedId,
-      dueDate,
+      url,
       name,
-      description,
       position: newPosition
     });
 
