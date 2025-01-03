@@ -43,7 +43,7 @@ export type Task = {
   name: string;
   url: string | null;
   description: string | null;
-  dueDate: string;
+  dueDate: string | null;
   position: number;
   status: string;
   projectId: string;

@@ -1,8 +1,7 @@
 import { db } from '@/lib/db.prisma';
-import type { TaskStatus } from '@prisma/client';
 
 type HighestPositionTaskProps = {
-  status: TaskStatus;
+  status: string;
   workspaceId: string;
 };
 

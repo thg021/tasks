@@ -1,11 +1,11 @@
 import { db } from '@/lib/db.prisma';
-import type { Prisma, TaskStatus } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 interface TaskFilters {
   workspaceId?: string;
   projectId?: string;
   assignedId?: string;
-  status?: TaskStatus;
+  status?: string;
   search?: string;
   dueDate?: Date | { start?: Date; end?: Date };
   pagination?: {
@@ -60,9 +60,9 @@ type TaskResponseDB = {
     name: string;
     description: string | null;
     url: string | null;
-    dueDate: Date;
+    dueDate: Date | null;
     position: number;
-    status: TaskStatus;
+    status: string;
     projectId: string;
     workspaceId: string;
     assignedId: string;

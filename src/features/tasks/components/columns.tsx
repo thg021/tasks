@@ -28,7 +28,7 @@ export const columns: ColumnDef<Task>[] = [
       const name = row.original.name;
       const dueDate = row.original.dueDate;
       const today = new Date();
-      const endDate = new Date(dueDate);
+      const endDate = dueDate ? new Date(dueDate) : new Date();
       const diffInDays = differenceInDays(endDate, today);
 
       const textColor = getTextColor(diffInDays);
@@ -94,7 +94,7 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const dueDate = row.original.dueDate;
 
-      return <TaskDate value={dueDate} />;
+      return <TaskDate value={dueDate ? dueDate : ''} />;
     }
   },
   {
