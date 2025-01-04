@@ -37,6 +37,11 @@ export type CreateInitialTaskSchemaProps = z.infer<typeof createInitialTaskSchem
 export const editTaskSchema = z.object({
   name: z.string().trim().min(1, 'Obrigatório'),
   id: z.string().trim().min(1, 'Obrigatório'),
+  userStoryId: z
+    .string()
+    .trim()
+    .nullable()
+    .transform((val) => val || undefined),
   url: z
     .string()
     .trim()

@@ -11,6 +11,7 @@ import { getTasks } from '@/features/tasks/services/get-tasks';
 import { updateTask } from '@/features/tasks/services/update-task';
 import { TaskStatus } from '@/features/tasks/types';
 import { getWorkspaceById } from '@/features/workspaces/services';
+import { extractParamUrl } from '@/lib/extract-param-url';
 import { sessionMiddleware } from '@/lib/session-middleware';
 import { zValidator } from '@hono/zod-validator';
 
@@ -156,6 +157,10 @@ const app = new Hono()
 
     const positionTask = await highestPositionTask({ status, workspaceId });
     const newPosition = positionTask ? positionTask.position + 1 : 1;
+    let userStoryId = '';
+    if (url) {
+      userStoryId = extractParamUrl(url, 'workitem');
+    }
 
     const task = await createTask({
       workspaceId,
@@ -163,7 +168,8 @@ const app = new Hono()
       status,
       url,
       name,
-      position: newPosition
+      position: newPosition,
+      userStoryId
     });
 
     return c.json({

@@ -6,6 +6,7 @@ type CreateTaskProps = CreateInitialTaskSchemaProps & {
   position: number;
   workspaceId: string;
   projectId: string;
+  userStoryId: string;
 };
 
 export const createTask = async (data: CreateTaskProps) =>

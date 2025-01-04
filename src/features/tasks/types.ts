@@ -12,7 +12,7 @@ export type Project = {
   name: string;
   workspaceId: string | Date;
   created: string | Date;
-  updated: string;
+  updated: string | Date;
 };
 
 export type Workspace = {
@@ -43,14 +43,15 @@ export type Task = {
   name: string;
   url: string | null;
   description: string | null;
-  dueDate: string | null;
+  dueDate: Date | string | null;
   position: number;
   status: string;
   projectId: string;
   workspaceId: string | null;
   assignedId: string | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   userAssigned?: Member;
+  userStoryId?: string | null;
   project: Project;
 };

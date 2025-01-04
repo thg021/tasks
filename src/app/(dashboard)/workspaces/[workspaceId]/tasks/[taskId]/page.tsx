@@ -1,16 +1,20 @@
+import { notFound } from 'next/navigation';
 import { getUserCurrentSession } from '@/features/auth/actions/get-user-current-session';
+import { getTaskById } from '@/features/tasks/actions/get-task-by-id';
+import { EditTaskForm } from '@/features/tasks/components/edit-task-form';
 
 type TaskIdPageProps = {
   params: {
     taskId: string;
+    workspaceId: string;
   };
 };
 export default async function TaskIdPage({ params }: TaskIdPageProps) {
-  await getUserCurrentSession();
+  const user = await getUserCurrentSession();
 
-  return (
-    <div className="flex flex-col">
-      <h1>Tasks - {params.taskId}</h1>
-    </div>
-  );
+  const task = await getTaskById({ ...params, user });
+  if (!task) {
+    notFound();
+  }
+  return <EditTaskForm initialValue={task} />;
 }

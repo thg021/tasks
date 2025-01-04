@@ -1,7 +1,10 @@
 'use client';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { map } from 'lodash';
-import { Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { filter, first, map } from 'lodash';
+import { Copy, Loader, PencilLineIcon, PencilOffIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,28 +25,26 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { MemberAvatar } from '@/features/members/components/member-avatar';
 import { useGetProjects } from '@/features/projects/api/use-get-projects';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { zodResolver } from '@hookform/resolvers/zod';
-// import type { Task } from '@prisma/client';
 import { useUpdateTask } from '../api/use-update-task';
-import { useEditTaskModal } from '../hooks/use-edit-task-modal';
 import { editTaskSchema, type EditTaskSchemaProps } from '../schemas';
 import { TaskStatus, type Task } from '../types';
 
 type EditTaskFormProps = {
   initialValue: Task;
+  edit?: boolean;
 };
-export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
+export const EditTaskForm = ({ initialValue, edit = true }: EditTaskFormProps) => {
+  const [isFormVisible, setFormVisible] = useState(edit);
   const workspaceId = useWorkspaceId();
-  const { close } = useEditTaskModal();
+  const router = useRouter();
   const { mutate: updateTask } = useUpdateTask();
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({ workspaceId });
 
-  const isLoading = isLoadingProjects;
   const form = useForm<EditTaskSchemaProps>({
     resolver: zodResolver(editTaskSchema),
     defaultValues: {
@@ -55,7 +56,8 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
       workspaceId: initialValue.workspaceId || undefined,
       url: initialValue.url || undefined,
       status: initialValue.status as TaskStatus,
-      assignedId: initialValue.assignedId || undefined
+      assignedId: initialValue.assignedId || undefined,
+      userStoryId: initialValue.userStoryId || undefined
     }
   });
 
@@ -69,7 +71,8 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
       {
         onSuccess: () => {
           //redirect for new task
-          close();
+          setFormVisible(false);
+          router.refresh();
         },
         onError: (error) => {
           console.error(error);
@@ -78,7 +81,7 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
     );
   };
 
-  if (isLoading) {
+  if (isLoadingProjects) {
     return (
       <Card className="size-full border-none shadow-none">
         <CardContent>
@@ -88,25 +91,60 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
     );
   }
 
+  const handleCopyUrl = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Link copiado para a área de transferência.');
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  const createdAtTask = new Date(initialValue.createdAt).toDateString();
+  const project = filter(projects?.data.project, (item) => item.id === initialValue.projectId);
+  const workspace = filter(
+    projects?.data.workspace,
+    (item) => item.id === initialValue.workspaceId
+  );
+
+  const member = filter(projects?.data.member, (item) => item.id === initialValue.assignedId);
   return (
     <Card className="size-full border-none shadow-none">
-      <CardHeader className="flex p-7">
-        <CardTitle className="text-xl font-bold">Editar tarefa</CardTitle>
+      <CardHeader className="flex px-7">
+        <span className="text-xs text-gray-400">
+          {initialValue.status} - {createdAtTask}
+        </span>
+        <div className="flex flex-row items-center justify-start gap-x-4">
+          <CardTitle className="text-4xl font-semibold">{initialValue.name}</CardTitle>
+          <Button type="button" variant="secondary" onClick={() => setFormVisible(!isFormVisible)}>
+            {!isFormVisible ? (
+              <PencilLineIcon className="size-4" />
+            ) : (
+              <PencilOffIcon className="size-4" />
+            )}
+          </Button>
+        </div>
       </CardHeader>
-      <div className="px-7">
-        <Separator />
-      </div>
+
       <CardContent className="p-7">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="flex flex-col space-y-2">
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+            <div className="flex flex-col gap-y-4">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Status:</FormLabel>
+
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {field.value}
+                    </span>
+
+                    {isFormVisible && (
                       <Select defaultValue={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger>
@@ -135,56 +173,132 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                    </FormItem>
-                  )}
-                />
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="userStoryId"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">US:</FormLabel>
+                    <div
+                      data-visible={isFormVisible}
+                      className="hidden flex-row items-center gap-x-4 data-[visible=false]:flex"
+                    >
+                      <span className="items-center">{initialValue.userStoryId}</span>
 
-                <FormField
-                  control={form.control}
-                  name="url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Url</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="text" placeholder="URL" disabled={false} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleCopyUrl(initialValue.userStoryId || '')}
+                      >
+                        <Copy className="size-4" />
+                      </Button>
+                    </div>
 
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="text" placeholder="Nome" disabled={false} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="dueDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Data de vencimento</FormLabel>
-                      <FormControl>
-                        <DatePicker {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="assignedId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Responsável</FormLabel>
+                    {isFormVisible && (
+                      <>
+                        <FormControl>
+                          <Input {...field} type="text" placeholder="US" disabled={false} />
+                        </FormControl>
+                        <FormMessage />
+                      </>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Url:</FormLabel>
+                    <div
+                      data-visible={isFormVisible}
+                      className="hidden flex-row items-center gap-x-4 data-[visible=false]:flex"
+                    >
+                      <span className="items-center">{field.value}</span>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleCopyUrl(initialValue.url || '')}
+                      >
+                        <Copy className="size-4" />
+                      </Button>
+                    </div>
+
+                    {isFormVisible && (
+                      <>
+                        <FormControl>
+                          <Input {...field} type="text" placeholder="URL" disabled={false} />
+                        </FormControl>
+                        <FormMessage />
+                      </>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Nome</FormLabel>
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {field.value}
+                    </span>
+                    {isFormVisible && (
+                      <>
+                        <FormControl>
+                          <Input {...field} type="text" placeholder="Nome" disabled={false} />
+                        </FormControl>
+                        <FormMessage />
+                      </>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="dueDate"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Data de vencimento</FormLabel>
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {field.value ? field.value.toDateString() : ''}
+                    </span>
+                    {isFormVisible && (
+                      <>
+                        <FormControl>
+                          <DatePicker {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="assignedId"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Responsável</FormLabel>
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {first(member)?.name || ''}
+                    </span>
+                    {isFormVisible && (
                       <Select defaultValue={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger>
@@ -204,16 +318,24 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
                             ))}
                         </SelectContent>
                       </Select>
-                    </FormItem>
-                  )}
-                />
+                    )}
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="projectId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Projeto</FormLabel>
+              <FormField
+                control={form.control}
+                name="projectId"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Projeto</FormLabel>
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {first(project)?.name || ''}
+                    </span>
+                    {isFormVisible && (
                       <Select defaultValue={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger>
@@ -233,16 +355,24 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
                             ))}
                         </SelectContent>
                       </Select>
-                    </FormItem>
-                  )}
-                />
+                    )}
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="workspaceId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Workspace</FormLabel>
+              <FormField
+                control={form.control}
+                name="workspaceId"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Workspace</FormLabel>
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {first(workspace)?.name || ''}
+                    </span>
+                    {isFormVisible && (
                       <Select defaultValue={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger>
@@ -262,36 +392,50 @@ export const EditTaskForm = ({ initialValue }: EditTaskFormProps) => {
                             ))}
                         </SelectContent>
                       </Select>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Textarea placeholder="Descrição" className="h-60 resize-none" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Uma descrição breve sobre a task ajuda no entendimento da tarefa.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col space-y-4">
+              <h2 className="my-4 text-2xl font-semibold">Descrição</h2>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="h-12 space-y-0">
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {field.value}
+                    </span>
+                    {isFormVisible && (
+                      <>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Descrição"
+                            className="h-auto resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Uma descrição breve sobre a task ajuda no entendimento da tarefa.
+                        </FormDescription>
+                        <FormMessage />
+                      </>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+            {isFormVisible && (
+              <div className="mt-8 flex items-center justify-between">
+                <Button size="lg" type="submit" disabled={isLoadingProjects}>
+                  Atualizar tarefa
+                </Button>
               </div>
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <Button type="button" onClick={close} size="lg" variant="secondary">
-                Cancelar
-              </Button>
-              <Button size="lg" type="submit" disabled={isLoadingProjects}>
-                Atualizar tarefa
-              </Button>
-            </div>
+            )}
           </form>
         </Form>
       </CardContent>
