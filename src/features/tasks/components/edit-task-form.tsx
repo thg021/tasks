@@ -28,6 +28,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { MemberAvatar } from '@/features/members/components/member-avatar';
 import { useGetProjects } from '@/features/projects/api/use-get-projects';
+import { useGetSprintByWorkspaceId } from '@/features/sprints/api/use-get-sprint-by-workspace-id';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUpdateTask } from '../api/use-update-task';
@@ -44,6 +45,7 @@ export const EditTaskForm = ({ initialValue, edit = false }: EditTaskFormProps) 
   const router = useRouter();
   const { mutate: updateTask } = useUpdateTask();
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({ workspaceId });
+  const { data: sprints, isLoading: isLoadingSprints } = useGetSprintByWorkspaceId({ workspaceId });
 
   const form = useForm<EditTaskSchemaProps>({
     resolver: zodResolver(editTaskSchema),
@@ -57,7 +59,9 @@ export const EditTaskForm = ({ initialValue, edit = false }: EditTaskFormProps) 
       url: initialValue.url || undefined,
       status: initialValue.status as TaskStatus,
       assignedId: initialValue.assignedId || undefined,
-      userStoryId: initialValue.userStoryId || undefined
+      userStoryId: initialValue.userStoryId || undefined,
+      storyPoints: initialValue.storyPoints || 0,
+      sprintId: initialValue.sprintId || undefined
     }
   });
 
@@ -81,7 +85,7 @@ export const EditTaskForm = ({ initialValue, edit = false }: EditTaskFormProps) 
     );
   };
 
-  if (isLoadingProjects) {
+  if (isLoadingProjects && isLoadingSprints) {
     return (
       <Card className="size-full border-none shadow-none">
         <CardContent>
@@ -106,6 +110,7 @@ export const EditTaskForm = ({ initialValue, edit = false }: EditTaskFormProps) 
     projects?.data.workspace,
     (item) => item.id === initialValue.workspaceId
   );
+  const sprint = filter(sprints?.data, (item) => item.id === initialValue.sprintId);
 
   const member = filter(projects?.data.member, (item) => item.id === initialValue.assignedId);
   return (
@@ -171,6 +176,40 @@ export const EditTaskForm = ({ initialValue, edit = false }: EditTaskFormProps) 
                           <SelectItem value={TaskStatus.QA}>
                             <div className="flex items-center gap-x-2">QA</div>
                           </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="sprintId"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Sprint</FormLabel>
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {first(sprint)?.name || ''}
+                    </span>
+                    {isFormVisible && (
+                      <Select defaultValue={field.value} onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o projeto" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <FormMessage />
+                        <SelectContent>
+                          {sprints?.data &&
+                            map(sprints?.data, (sprint) => (
+                              <SelectItem key={sprint.id} value={sprint.id}>
+                                <div className="flex items-center gap-x-2">{sprint.name}</div>
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     )}
@@ -391,6 +430,58 @@ export const EditTaskForm = ({ initialValue, edit = false }: EditTaskFormProps) 
                                 </div>
                               </SelectItem>
                             ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="storyPoints"
+                render={({ field }) => (
+                  <FormItem className="flex h-12 flex-row items-center space-x-4 space-y-0">
+                    <FormLabel className="text-grey-700 w-32 text-sm">Story points:</FormLabel>
+                    <span
+                      data-visible={isFormVisible}
+                      className="hidden items-center data-[visible=false]:flex"
+                    >
+                      {initialValue.storyPoints || ''}
+                    </span>
+                    {isFormVisible && (
+                      <Select
+                        defaultValue={field.value?.toString()}
+                        onValueChange={(newValue) => field.onChange(Number(newValue))}
+                      >
+                        {' '}
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a pessoa" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <FormMessage />
+                        <SelectContent>
+                          <SelectItem value="0">
+                            <div className="flex items-center gap-x-2">0</div>
+                          </SelectItem>
+                          <SelectItem value="1">
+                            <div className="flex items-center gap-x-2">1</div>
+                          </SelectItem>
+                          <SelectItem value="2">
+                            <div className="flex items-center gap-x-2">2</div>
+                          </SelectItem>
+                          <SelectItem value="3">
+                            <div className="flex items-center gap-x-2">3</div>
+                          </SelectItem>
+                          <SelectItem value="5">
+                            <div className="flex items-center gap-x-2">5</div>
+                          </SelectItem>
+                          <SelectItem value="8">
+                            <div className="flex items-center gap-x-2">8</div>
+                          </SelectItem>
+                          <SelectItem value="13">
+                            <div className="flex items-center gap-x-2">13</div>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     )}

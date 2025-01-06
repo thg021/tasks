@@ -9,7 +9,10 @@ export const createTaskSchema = z.object({
   projectId: z.string().trim().min(1, 'Obrigatório'),
   dueDate: z.coerce.date(),
   assignedId: z.string().trim().min(1, 'Obrigatório'),
-  description: z.string().optional()
+  description: z.string().optional(),
+  storyPoints: z.number().optional(),
+  sprintId: z.string().trim().optional(),
+  userStoryId: z.string().trim().optional()
 });
 
 // Type inference
@@ -41,29 +44,46 @@ export const editTaskSchema = z.object({
     .string()
     .trim()
     .nullable()
+    .optional()
     .transform((val) => val || undefined),
   url: z
     .string()
     .trim()
     .nullable()
+    .optional()
     .transform((val) => val || undefined),
   status: z
     .nativeEnum(TaskStatus)
     .nullable()
+    .optional()
     .transform((val) => val || undefined),
   workspaceId: z
     .string()
     .trim()
     .nullable()
+    .optional()
+    .transform((val) => val || undefined),
+  sprintId: z
+    .string()
+    .trim()
+    .nullable()
+    .optional()
+    .transform((val) => val || undefined),
+  storyPoints: z
+    .number()
+    .nullable()
+    .optional()
     .transform((val) => val || undefined),
   projectId: z
     .string()
     .trim()
     .nullable()
+    .optional()
     .transform((val) => val || undefined),
   dueDate: z.coerce
     .string()
     .nullable()
+    .optional()
     .transform((val) => {
       if (!val) return undefined;
       return new Date(val);
@@ -72,10 +92,12 @@ export const editTaskSchema = z.object({
     .string()
     .trim()
     .nullable()
+    .optional()
     .transform((val) => val || undefined),
   description: z
     .string()
     .nullable()
+    .optional()
     .transform((val) => val || undefined)
 });
 

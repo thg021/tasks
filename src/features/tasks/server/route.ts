@@ -183,8 +183,19 @@ const app = new Hono()
     async (c) => {
       const user = c.get('user');
       const { taskId } = c.req.param();
-      const { workspaceId, projectId, status, assignedId, dueDate, name, description, url } =
-        c.req.valid('json');
+      const {
+        workspaceId,
+        projectId,
+        status,
+        assignedId,
+        dueDate,
+        name,
+        description,
+        url,
+        storyPoints,
+        sprintId,
+        userStoryId
+      } = c.req.valid('json');
 
       if (!projectId || !workspaceId) {
         return c.json(
@@ -226,7 +237,10 @@ const app = new Hono()
         dueDate,
         name,
         description,
-        url
+        url,
+        storyPoints,
+        sprintId,
+        userStoryId: url ? extractParamUrl(url, 'workitem') : userStoryId
       });
 
       return c.json({

@@ -53,5 +53,7 @@ export type Task = {
   updatedAt: Date | string;
   userAssigned?: Member;
   userStoryId?: string | null;
+  storyPoints?: number | null;
+  sprintId?: string | null;
   project: Project;
 };
