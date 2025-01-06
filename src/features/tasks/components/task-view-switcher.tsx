@@ -1,6 +1,7 @@
 'use client';
 import { PlusIcon } from 'lucide-react';
 import { useQueryState } from 'nuqs';
+import { DataTable } from '@/components/data-table';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,7 +12,6 @@ import { useCreateTaskModal } from '../hooks/use-create-task-modal';
 import { useTasksFilters } from '../hooks/use-tasks-filters';
 import { columns } from './columns';
 import { DataFilters } from './data-filters';
-import { DataTable } from './data-table';
 
 export const TaskViewSwitcher = () => {
   const [view, setView] = useQueryState('task-view', {
@@ -55,7 +55,14 @@ export const TaskViewSwitcher = () => {
         <Separator className="my-4" />
         <>
           <TabsContent className="mt-0" value="table">
-            <DataTable columns={columns} data={result?.data.tasks || []} />
+            <DataTable.Root columns={columns} data={result?.data.tasks || []}>
+              <DataTable.Filter columnId="name" />
+              <DataTable.Container>
+                <DataTable.Header />
+                <DataTable.Body />
+              </DataTable.Container>
+              <DataTable.Pagination />
+            </DataTable.Root>
           </TabsContent>
           <TabsContent className="mt-0" value="kanban">
             kanban

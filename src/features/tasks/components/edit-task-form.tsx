@@ -38,7 +38,7 @@ type EditTaskFormProps = {
   initialValue: Task;
   edit?: boolean;
 };
-export const EditTaskForm = ({ initialValue, edit = true }: EditTaskFormProps) => {
+export const EditTaskForm = ({ initialValue, edit = false }: EditTaskFormProps) => {
   const [isFormVisible, setFormVisible] = useState(edit);
   const workspaceId = useWorkspaceId();
   const router = useRouter();
@@ -188,14 +188,15 @@ export const EditTaskForm = ({ initialValue, edit = true }: EditTaskFormProps) =
                       className="hidden flex-row items-center gap-x-4 data-[visible=false]:flex"
                     >
                       <span className="items-center">{initialValue.userStoryId}</span>
-
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => handleCopyUrl(initialValue.userStoryId || '')}
-                      >
-                        <Copy className="size-4" />
-                      </Button>
+                      {initialValue.userStoryId && (
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => handleCopyUrl(initialValue.userStoryId || '')}
+                        >
+                          <Copy className="size-4" />
+                        </Button>
+                      )}
                     </div>
 
                     {isFormVisible && (
